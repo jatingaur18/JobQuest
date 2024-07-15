@@ -1,0 +1,52 @@
+!@#ques 1
+Which of the following is not a valid data type in Python?
+!@#opt
+a) int
+b) float
+c) bool
+d) string
+!@#ans
+d)
+
+!@#ques 2
+What is the output of the following code?
+```python
+print(True and False)
+```
+!@#opt
+a) True
+b) False
+c) Syntax error
+d) None
+!@#ans
+b)
+
+!@#ques 3
+Which of the following is the correct syntax for a while loop in Python?
+!@#opt
+a) for i in range(n):
+b) while i < n:
+c) do while i < n:
+d) while (i < n):
+!@#ans
+b)
+
+!@#ques 4
+What is the purpose of the `pass` statement in Python?
+!@#opt
+a) To execute a block of code
+b) To skip a block of code
+c) To define a function
+d) To raise an exception
+!@#ans
+b)
+
+!@#ques 5
+Which of the following is not a supported method for accessing elements in a Python list?
+!@#opt
+a) list[0]
+b) list.get(0)
+c) list.[0]
+d) list(-1)
+!@#ans
+c)	

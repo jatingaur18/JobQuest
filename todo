@@ -1,0 +1,19 @@
+1. Webpages
+    1. home
+        1. user can upload their resume
+        2. recent job listings
+
+    2. all jobs
+        1. show all jobs and user can apply
+
+    3. create a job(for company)
+        1. can create a new job
+        2. define requirements
+        3. (internship/job)
+        3. salary
+    
+    4. jobstatus
+
+2. Model
+    1. takes resume pdf and requirements as input
+    2. generates a score based on that

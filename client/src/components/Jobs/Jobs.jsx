@@ -56,9 +56,9 @@ const Jobs = () => {
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
-      <ul className="space-y-4">
+      <ul className="space-y-4 p-2">
         {data.map(item => (
-          <li key={item.company} className="flex justify-between items-center p-4 bg-gray-100 mb-2 border-2 shadow-md rounded-lg">
+          <li key={item.company} className="flex justify-between items-center p-4 bg-gray-100 m-2 border-2 shadow-md rounded-lg">
             <div className="text-lg font-semibold">
               {item.title} at {item.company}
             </div>

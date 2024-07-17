@@ -10,6 +10,10 @@ function Login(){
   const [Upassword, setPassword] = useState("");
   const nav = useNavigate();
 
+  const register = async () => {
+    nav('/Register')
+  }
+
   const submit = async () => {
     const response = await fetch('http://localhost:3000/login', {
       method: "POST",
@@ -29,7 +33,7 @@ function Login(){
       if(json.type == 'company'){
         localStorage.setItem('Company', JSON.stringify(json.email));
         localStorage.setItem('CompanyName', JSON.stringify(json.username));
-        nav('/company')
+        nav('/')
       }else{
         localStorage.setItem('applicant', JSON.stringify(json.email));
         nav('/jobs');
@@ -72,11 +76,18 @@ function Login(){
           </label>
           <div className="text-center">
             <button
-              className="mt-4 px-4 py-2 bg-violet-900 text-white rounded-md hover:bg-violet-700"
+              className="m-2 px-4 py-2 border-2 border-violet-900 bg-violet-900 text-white rounded-md hover:bg-violet-700"
               type="submit"
               onClick={submit}
             >
-              Submit
+              Login
+            </button>
+            <button
+              className="m-2 px-4 py-2 border-2 border-violet-900 bg-gray-300 text-black rounded-md hover:bg-gray-600 hover:text-white"
+              type="submit"
+              onClick={register}
+            >
+              Register
             </button>
           </div>
         </div>

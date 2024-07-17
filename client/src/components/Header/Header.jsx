@@ -83,7 +83,7 @@ function Header() {
                 </NavLink>
               </li>
               <li>
-                <NavLink
+                {user.type !== "company"?(<NavLink
                   to="/Jobs"
                   className={({ isActive }) =>
                     `block py-2 pr-4 pl-3 duration-200 ${
@@ -92,7 +92,18 @@ function Header() {
                   }
                 >
                   Jobs
+                </NavLink>):(
+                  <NavLink
+                  to="/Jobs"
+                  className={({ isActive }) =>
+                    `block py-2 pr-4 pl-3 duration-200 ${
+                      isActive ? "text-violet-900" : "text-gray-700"
+                    } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 hover:text-violet-900 lg:p-0`
+                  }
+                >
+                  Create Jobs
                 </NavLink>
+                )}
               </li>
               <li>
                 <NavLink

@@ -6,6 +6,12 @@ A  Web app that track resume applications for company as well as generate skill 
 * Generates a resume score against the job description using Google HuggingFace's [word2vec](https://huggingface.co/fse/word2vec-google-news-300) model and cosine similarity
 * Generates a skill test based on the job description for each applicant using [Gemeni](https://gemini.google.com/app?hl=en-IN) API
 
+## How to install 
+Just the usual...
+- clone the code go server create a config.json from your MongoDB
+- got to client folder then run `npm install` on the terminal
+- `npm run dev` to open the client app
+
 ## To do
 
 - [x] Complete landing page

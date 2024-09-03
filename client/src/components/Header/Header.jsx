@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
-
+import jobquestImage from '../../assets/jobquest.png'; 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useContext(UserContext);
@@ -11,12 +11,12 @@ function Header() {
   };
 
   return (
-    <header className="shadow sticky z-50 top-0">
+    <header className="shadow sticky z-50 top-0 ">
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
           <Link to="/" className="flex items-center">
             <img
-              src=".\src\assets\jobquest.png"
+              src={jobquestImage}
               className="mr-4 h-12"
               alt="Logo"
             />
@@ -94,7 +94,7 @@ function Header() {
                   Jobs
                 </NavLink>):(
                   <NavLink
-                  to="/Jobs"
+                  to="/Createjob"
                   className={({ isActive }) =>
                     `block py-2 pr-4 pl-3 duration-200 ${
                       isActive ? "text-violet-900" : "text-gray-700"

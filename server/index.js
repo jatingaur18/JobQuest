@@ -5,10 +5,11 @@ const app = express();
 const port = 3000;
 const { spawn } = require('child_process');
 const fs = require('fs');
-const CONFIG = require('./config.json');
-
+// const CONFIG = require('./config.json');
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
-const uri = CONFIG.mongodburi;
+
+const uri = process.env.mongodburi;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -30,7 +31,6 @@ async function connectToDatabase() {
   }
 }
 
-connectToDatabase();
 
 app.use(cors());
 app.use(express.json());
@@ -40,6 +40,7 @@ app.post('/', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+  await connectToDatabase();
   if (!db) {
     return res.status(500).json({ message: "Database not connected" });
   }
@@ -168,39 +169,27 @@ function retrievePDF(collectionName, email) {
   });
 }
 
+// app.post('/uploadresume', upload.single('resume'), async (req, res) => {
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
-  }
-});
+//   const fs = require('fs');
+//   const resume = db.collection('resume');
+//   const data = fs.readFileSync(req.file.path);
 
-const upload = multer({ storage: storage });
+//   resume.insertOne({
+//     email: req.headers.email,
+//     filename: req.file.originalname,
+//     contentType: req.file.mimetype,
+//     size: req.file.size,
+//     pdf: {
+//       data: data,
+//       contentType: req.file.mimetype
+//     }
+//   });
 
-app.post('/uploadresume', upload.single('resume'), async (req, res) => {
+//   fs.unlinkSync(req.file.path);
 
-  const fs = require('fs');
-  const resume = db.collection('resume');
-  const data = fs.readFileSync(req.file.path);
-
-  resume.insertOne({
-    email: req.headers.email,
-    filename: req.file.originalname,
-    contentType: req.file.mimetype,
-    size: req.file.size,
-    pdf: {
-      data: data,
-      contentType: req.file.mimetype
-    }
-  });
-
-  fs.unlinkSync(req.file.path);
-
-  res.status(200).send("done");
-})
+//   res.status(200).send("done");
+// })
 
 app.get('/jobs', async (req, res) => {
     

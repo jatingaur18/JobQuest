@@ -2,3 +2,4 @@ node_modules
 uploads
 config.json
 GoogleNews-vectors-negative300.bin
+.env

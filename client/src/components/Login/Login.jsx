@@ -59,7 +59,7 @@ function Login(){
         <h1 className="text-center text-3xl font-bold">Login</h1>
         <div className="space-y-4">
           <label className="block">
-            <span className="block text-gray-700">Username</span>
+            <span className="block text-gray-700">Email</span>
             <input
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-violet-900"
               type="text"

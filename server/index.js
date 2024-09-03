@@ -99,9 +99,12 @@ app.post('/createjob', async (req, res) => {
   const createjob = req.body;
   await connectToDatabase();
 
+  await connectToDatabase();
+
   const jobs = db.collection('jobs');
   
   createjob['participants'] = [null];
+  console.log(createjob.description);
   console.log(createjob.description);
 
   try {
@@ -261,7 +264,11 @@ const executePythonone = async (script, arg2) => {
 
   const result = await new Promise((resolve, reject) => {
     let output = '';
+    let output = '';
 
+    py.stdout.on('data', (data) => {
+      output += data.toString();
+    });
     py.stdout.on('data', (data) => {
       output += data.toString();
     });
@@ -270,7 +277,13 @@ const executePythonone = async (script, arg2) => {
       console.error(`[python] Error occurred: ${data}`);
       reject(`Error occurred in ${script}`);
     });
+    py.stderr.on("data", (data) => {
+      console.error(`[python] Error occurred: ${data}`);
+      reject(`Error occurred in ${script}`);
+    });
 
+    py.on("exit", (code) => {
+      if (code === 0) {
     py.on("exit", (code) => {
       if (code === 0) {
         resolve(output);
@@ -278,9 +291,13 @@ const executePythonone = async (script, arg2) => {
         reject(`Child process exited with code ${code}`);
       }
     });
+      } else {
+        reject(`Child process exited with code ${code}`);
+      }
+    });
   });
 
-  return result;
+  return result;
 }
 
 

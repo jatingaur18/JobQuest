@@ -1,13 +1,14 @@
+require('dotenv').config();
+const os = require('os');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const app = express();
 const port = 3000;
 const { spawn } = require('child_process');
-const fs = require('fs');
-// const CONFIG = require('./config.json');
-require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const { MongoClient, GridFSBucket } = require('mongodb');
+
+const upload = multer({ dest: os.tmpdir() });
 
 const uri = process.env.mongodburi;
 
@@ -20,15 +21,18 @@ const client = new MongoClient(uri, {
 });
 
 let db;
+let bucket;
 
 async function connectToDatabase() {
   try {
     await client.connect();
     db = client.db('hackOharbour');
-    console.log('Connected to MongoDB');
+    bucket = new GridFSBucket(db, { bucketName: 'resumeBucket' });
+    console.log('Connected to MongoDB and GridFS');
   } catch (err) {
     console.error('Failed to connect to MongoDB', err);
   }
+
 }
 
 
@@ -40,7 +44,6 @@ app.post('/', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  await connectToDatabase();
   if (!db) {
     return res.status(500).json({ message: "Database not connected" });
   }
@@ -162,34 +165,29 @@ function retrievePDF(collectionName, email) {
       const pdfString = Buffer.from(pdfData, 'binary').toString('base64'); // Convert to base64 string
       console.log('PDF retrieved and converted to string:', pdfString);
 
-      // Now you can use the `pdfString` variable for further processing
+      // Now you can use the pdfString variable for further processing
       // Close the connection after using the string
       return pdfString;
     });
   });
 }
 
-// app.post('/uploadresume', upload.single('resume'), async (req, res) => {
+app.post('/uploadresume', upload.single('resume'), async (req, res) => {
+  const fs = require('fs');
+  const resume = await db.collection('resume');
 
-//   const fs = require('fs');
-//   const resume = db.collection('resume');
-//   const data = fs.readFileSync(req.file.path);
+  resume.insertOne({
+    email: req.headers.email,
+    filename: req.file.originalname,
+  });
 
-//   resume.insertOne({
-//     email: req.headers.email,
-//     filename: req.file.originalname,
-//     contentType: req.file.mimetype,
-//     size: req.file.size,
-//     pdf: {
-//       data: data,
-//       contentType: req.file.mimetype
-//     }
-//   });
+  fs.writeFileSync('./myFile', req.file.toString());
 
-//   fs.unlinkSync(req.file.path);
+  fs.createReadStream('./myFile').
+    pipe(bucket.openUploadStream(`${req.headers.email}_${req.file.originalname}`));
 
-//   res.status(200).send("done");
-// })
+  res.status(200).send("done");
+})
 
 app.get('/jobs', async (req, res) => {
     
@@ -339,6 +337,7 @@ async function gettest(text){
 
 
 
+connectToDatabase();
 
 
 

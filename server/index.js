@@ -96,18 +96,26 @@ app.get('/company:cname', async (req, res) => {
 })
 
 app.post('/createjob', async (req, res) => {
-  
   const createjob = req.body;
+  await connectToDatabase();
+
   const jobs = db.collection('jobs');
   
   createjob['participants'] = [null];
-  createjob['test'] = await gettest(await executePythonone('test_generator/test_generator.py', createjob.description));
+  console.log(createjob.description);
 
-  console.log(createjob);
+  try {
+    const testText = await executePythonone('test_generator/test_generator.py', createjob.description);
+    createjob['test'] = await gettest(testText);
+    console.log(createjob);
+    await jobs.insertOne(createjob);
+    res.status(200).send("done");
+  } catch (error) {
+    console.error('Error generating test:', error);
+    res.status(500).json({ message: "Internal server error while generating test" });
+  }
+});
 
-  jobs.insertOne(createjob);
-  res.status(200).send("done");
-})
 
 app.post('/applyjob', async (req, res) => {
 
@@ -252,25 +260,29 @@ const executePythonone = async (script, arg2) => {
   const py = spawn("python", [script, arg2]);
 
   const result = await new Promise((resolve, reject) => {
-    let output;
+    let output = '';
 
-      py.stdout.on('data', (data) => {
-        output = data.toString();
-      });
+    py.stdout.on('data', (data) => {
+      output += data.toString();
+    });
 
-      py.stderr.on("data", (data) => {
-        console.error(`[python] Error occured: ${data}`);
-        reject(`Error occured in ${script}`);
-      });
+    py.stderr.on("data", (data) => {
+      console.error(`[python] Error occurred: ${data}`);
+      reject(`Error occurred in ${script}`);
+    });
 
-      py.on("exit", (code) => {
-        console.log(`Child process exited with code ${code}`);
+    py.on("exit", (code) => {
+      if (code === 0) {
         resolve(output);
-      });
+      } else {
+        reject(`Child process exited with code ${code}`);
+      }
+    });
   });
 
   return result;
 }
+
 
 
 

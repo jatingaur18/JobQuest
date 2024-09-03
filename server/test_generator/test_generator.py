@@ -10,6 +10,10 @@ with open(r'../test_generator/API.yml','r') as file:
 
 google_API = API['key'] 
 
+<<<<<<< Updated upstream
+=======
+google_API = "AIzaSyAf0NwX8266hYeQqyozdmqb99H4xwMWxFk"
+>>>>>>> Stashed changes
 genai.configure(api_key = google_API)
 
 model = genai.GenerativeModel('gemini-pro')

@@ -4,7 +4,7 @@ import yaml
 import google.generativeai as genai
 # !@#$*
 
-with open(r'test_generator\API.yml','r') as file:
+with open(r'','r') as file:
     API = yaml.safe_load(file)
 
 key = API['key']

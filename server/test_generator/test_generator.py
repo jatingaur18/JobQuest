@@ -1,10 +1,15 @@
 import sys
 from PyPDF2 import PdfReader
 import google.generativeai as genai
+import yaml
 # !@#$*
 
+with open(r'../test_generator/API.yml','r') as file:
+    API = yaml.safe_load(file)
 
-google_API = "AIzaSyAf0NwX8266hYeQqyozdmqb99H4xwMWxFk"
+
+google_API = API['key'] 
+
 genai.configure(api_key = google_API)
 
 model = genai.GenerativeModel('gemini-pro')

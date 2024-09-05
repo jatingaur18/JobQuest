@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-router.post('/', async (req, res) => {
+router.post('/:id', async (req, res) => {
   const id = req.params.id.slice(1);
   const questarr = await db.collection('jobs').findOne({ID: "rusted"});
     console.log(questarr);

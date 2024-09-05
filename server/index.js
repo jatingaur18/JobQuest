@@ -26,13 +26,13 @@ app.use(express.json());
 
 app.use('/login', loginRoute);
 app.use('/signup', signupRoute);
-app.use('/company:cname', companyRoute);
+app.use('/company', companyRoute);
 app.use('/createjob', createjobRoute);
 app.use('/applyjob', applyjobRoute);
 app.use('/uploadresume', uploadresumeRoute);
 app.use('/jobs', jobsRoute);
-app.use('/jobstatus:id', jobstatusRoute);
-app.use('/gettest:id', gettestRoute);
+app.use('/jobstatus', jobstatusRoute);
+app.use('/gettest', gettestRoute);
 
 
 app.listen(port, () => {

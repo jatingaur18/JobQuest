@@ -11,7 +11,7 @@ const Openedjobs = () => {
     const nav = useNavigate();
     const name = user.username;
     const getJobs = async () => {
-      const response = await fetch(`http://localhost:3000/company:${name}`, {
+      const response = await fetch(`http://localhost:3000/company/:${name}`, {
         method: "GET",
       });
   

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/:cname', async (req, res) => {
   let companyName = req.params.cname.slice(1);
   console.log(companyName);
   const jobs = db.collection('jobs');

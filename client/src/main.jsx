@@ -11,6 +11,7 @@ import User from './components/User/User.jsx'
 import Login from './components/Login/Login.jsx'
 import Register from './components/Register/Register.jsx'
 import Createjob from './components/Createjobs/Createjobs.jsx'
+import Openedjobs from './components/Openedjobs/Openedjobs.jsx'
 // const router=createBrowserRouter([
 //   {
 //     path:'/',
@@ -41,6 +42,7 @@ const router=createBrowserRouter(
     <Route path='Register' element={<Register/>}/>
     <Route path='MyResume' element={<Resume/>}/>
     <Route path='createjob' element={<Createjob/>}/>
+    <Route path='Openedjobs' element={<Openedjobs/>}/>
     <Route path='user/:id' element={<User/>}/>
     </Route>
   )

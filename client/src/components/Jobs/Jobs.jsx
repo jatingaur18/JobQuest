@@ -25,27 +25,29 @@ const Jobs = () => {
     applysend(item);
   }
 
-  const applysend = async (item) => {
-    const response = await fetch('http://localhost:3000/applyjob', {
-      method: "POST",
-      headers: {
-        'Content-Type': "application/json",
-      },
-      body: JSON.stringify(
-        {
-          job: item,
-          email: JSON.parse(localStorage.getItem('applicant')),
-        }
-      ),
-    });
+  // const applysend = async (item) => {
+  //   const response = await fetch('http://localhost:3000/applyjob', {
+  //     method: "POST",
+  //     headers: {
+  //       'Content-Type': "application/json",
+  //     },
+  //     body: JSON.stringify(
+  //       {
+  //         job: item,
+  //         email: JSON.parse(localStorage.getItem('applicant')),
+  //       }
+  //     ),
+  //   });
 
-    if (response.status === 200) {
-      console.log("done");
-    } else {
-      console.log("undone");
-    }
+  //   if (response.status === 200) {
+  //     console.log("done");
+  //   } else {
+  //     console.log("undone");
+  //   }
+  // }
+  const applysend = async(item)=>{
+    nav(`/skilltest/:${item.id}`)
   }
-
   useEffect(() => {
     if (!user.username) {
       nav('/Login');
@@ -58,7 +60,7 @@ const Jobs = () => {
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
       <ul className="space-y-4 p-2">
         {data.map(item => (
-          <li key={item.company} className="flex justify-between items-center p-4 bg-gray-100 m-2 border-2 shadow-md rounded-lg">
+          <li key={item.id} className="flex justify-between items-center p-4 bg-gray-100 m-2 border-2 shadow-md rounded-lg">
             <div className="text-lg font-semibold">
               {item.title} at {item.company}
             </div>

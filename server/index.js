@@ -11,6 +11,7 @@ const jobstatusRoute = require('./routes/jobstatus');
 const uploadresumeRoute = require('./routes/uploadresume');
 const applyjobRoute = require('./routes/applyjob');
 const companyRoute = require('./routes/company');
+const uploadedResumes = require('./routes/uploadedResumes');
 
 const {connectToDatabase} = require('./utils');
 
@@ -33,6 +34,7 @@ app.use('/uploadresume', uploadresumeRoute);
 app.use('/jobs', jobsRoute);
 app.use('/jobstatus', jobstatusRoute);
 app.use('/gettest', gettestRoute);
+app.use('/uploadedResumes', uploadedResumes);
 
 
 app.listen(port, () => {

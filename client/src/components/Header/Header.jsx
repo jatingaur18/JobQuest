@@ -25,24 +25,18 @@ function Header() {
             {user.username ? (
               <Link
                 to="/"
-                className="text-gray-900 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
               >
                 Hi {user.username} !
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="text-gray-900 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
               >
                 Log in
               </Link>
             )}
-            <Link
-              to="#"
-              className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-            >
-              Company
-            </Link>
           </div>
           <button
             onClick={handleMenuToggle}
@@ -50,7 +44,7 @@ function Header() {
           >
             <svg
               className="w-6 h-6"
-              fill="none"
+              fillRule="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +108,7 @@ function Header() {
                     } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 hover:text-violet-900 lg:p-0`
                   }
                 >
-                  Jobs
+                  Resume
                 </NavLink>):(
                   <NavLink
                   to="/Openedjobs"

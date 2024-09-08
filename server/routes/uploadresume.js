@@ -8,7 +8,6 @@ const upload = multer({ dest: os.tmpdir() });
 router.post('/', upload.single('resume'), async (req, res) => {
   const fs = require('fs');
   const resume = await db.collection('resume');
-
   resume.insertOne({
     email: req.headers.email,
     filename: req.file.originalname,

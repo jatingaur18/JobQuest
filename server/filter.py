@@ -15,9 +15,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
 resume_path = sys.argv[1]
-job_path = sys.argv[2]
+job = sys.argv[2]
 resume = PdfReader(resume_path).pages[0].extract_text()
-job =  PdfReader(job_path).pages[0].extract_text()
+# job =  PdfReader(job_path).pages[0].extract_text()
 
 # resume_read = PdfReadresume  = docx2txt.process(resume_path)
 # job = docx2txt.process(job_path)

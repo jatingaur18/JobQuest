@@ -41,12 +41,12 @@ function User() {
   };
 
   const handleResumeSelect = (resume) => {
-    setSelectedResume(resume.id);
+    setSelectedResume(resume.path);
   };
 
   const handleSubmit = async () => {
     let tempScore = 0;
-  
+    console.log("here");
     ques.forEach((question) => {
       if (selectedAnswers[question.question_no] === question.correct) {
         tempScore += 1;
@@ -94,7 +94,7 @@ function User() {
               <input
                 type="radio"
                 name="resume"
-                value={resume.id}
+                value={resume.path}
                 onChange={() => handleResumeSelect(resume)}
                 className="mr-2"
               />

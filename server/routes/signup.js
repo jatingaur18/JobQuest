@@ -3,7 +3,6 @@ const router = express.Router()
 
 router.post('/', async (req, res) => {
   const userdata = req.body;
-  const db = client.db('hackOharbour');
   const users = db.collection('users');
   const userarr = await users.find({}).toArray();
   

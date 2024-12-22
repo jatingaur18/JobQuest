@@ -46,7 +46,7 @@ const Jobs = () => {
   //   }
   // }
   const applysend = async(item)=>{
-    nav(`/skilltest/:${item.id}`)
+    nav(`/skilltest/${item.id}`)
   }
   useEffect(() => {
     if (!user.username) {

@@ -23,28 +23,40 @@ function Contact() {
   };
 
   const fileUpload = async () => {
+    if (!file) {
+      console.error('No file selected for upload');
+      return;
+    }
+  
     const storeEmail = user.email;
     const formData = new FormData();
-    formData.append("resume", file);
-
-    const response = await fetch('http://localhost:3000/uploadresume', {
-      method: "POST",
-      headers: {
-        email: storeEmail,
-      },
-      body: formData,
-    });
-
-    if (response.status === 200) {
-      console.log('File uploaded successfully');
-      // Fetch resumes again after successful upload
-      const updatedResumes = await response.json();
-      setResumes(updatedResumes);
-      fetchResumes();
-    } else {
-      console.error('Error uploading file:', response.statusText);
+    formData.append("file", file); // Ensure the key matches backend expectations
+  
+    try {
+      const response = await fetch('http://localhost:3000/uploadresume', {
+        method: "POST",
+        headers: {
+          email: storeEmail, // Add the email in headers
+          // Do not set 'Content-Type' manually here
+        },
+        body: formData,
+      });
+  
+      if (response.ok) {
+        console.log('File uploaded successfully');
+        // Fetch updated resumes
+        const updatedResumes = await response.json();
+        setResumes(updatedResumes);
+        fetchResumes();
+      } else {
+        const errorData = await response.json();
+        console.error('Error uploading file:', errorData.message || response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during file upload:', error);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-white px-6 py-4">

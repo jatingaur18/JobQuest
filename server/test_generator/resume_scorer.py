@@ -4,7 +4,7 @@ import google.generativeai as genai
 import yaml
 # !@#$*
 
-with open(r'../test_generator/API.yml','r') as file:
+with open(r'test_generator/API.yml','r') as file:
     API = yaml.safe_load(file)
 
 
@@ -15,12 +15,12 @@ genai.configure(api_key = google_API)
 model = genai.GenerativeModel('gemini-pro')
 
 #query based on job desc
-# f = open("jobquery.txt", "r")
-# text = f.read()
-# desc_query = text
-job_desc = PdfReader(sys.argv[1]).pages[0].extract_text()
-resume_text = PdfReader(sys.argv[2]).pages[0].extract_text()
+resume_text = PdfReader(sys.argv[1]).pages[0].extract_text()
+job_desc = (sys.argv[2])
 
+f = open("jobquery.txt", "w")
+text = f.write(job_desc)
+# desc_query = text
 # Prompt for scoring the resume against the job description
 desc_query = (
     f"Evaluate the following resume based on the job description and provide a compatibility score "

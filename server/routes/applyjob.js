@@ -37,55 +37,44 @@ router.post('/', async (req, res) => {
               file.close(() => {
                     console.log('File downloaded successfully');
                 });
+            }).on('error', (err) => {
+                fs.unlink(destination, () => {
+                    console.error('Error downloading file:', err);
+                });
             });
-        }).on('error', (err) => {
-            console.error('Error downloading file:', err);
-            // fs.unlink(destination, () => {
-            // });
         });
+        const job_desc = jobs.description
+        const command = `python test_generator/resume_scorer.py resume.pdf "${job_desc}"`;
 
-    //     const bucket = new GridFSBucket(db, { bucketName: 'resume.files' });
+        exec(command, async (error, stdout, stderr) => {
+            if (error) {
+                console.error('Error running Python script:', error);
+                return res.status(500).json({ message: 'Error processing resume score' });
+            }
 
-    // // Convert the fileId to an ObjectId if it's in string format
-    // const objectId = new ObjectId("6767cf0f29d986f48759a673");
+            const resumeScore = parseFloat(stdout.trim());
+            if (isNaN(resumeScore)) {
+                return res.status(500).json({ message: 'Invalid score returned from Python script' });
+            }
 
-    // bucket.openDownloadStream(objectId).pipe(fs.createWriteStream('./resume12.pdf'));
+            // Calculate the average score
+            const updatedScore = (score)*2 + (resumeScore*9)/10;
 
+            // Push the new score to the participants array
+            const pushData = {
+                email: user.email,
+                name: user.username,
+                score: updatedScore,
+                link: resume
+            };
 
-        // Proceed with job description and Python script
-        // const job_desc = jobs.description;
-        // const pythonScript = path.join(__dirname, '../test_generator/resume_scorer.py');
-        // const command = `python ${pythonScript} "../resume.pdf" "../jobdesc.pdf"`;
+            await db.collection('jobs').updateOne(
+                { _id: new ObjectId(test_id) },
+                { $push: { participants: pushData } }
+            );
 
-        // exec(command, async (error, stdout, stderr) => {
-        //     if (error) {
-        //         console.error('Error running Python script:', error);
-        //         return res.status(500).json({ message: 'Error processing resume score' });
-        //     }
-
-        //     const resumeScore = parseFloat(stdout.trim());
-        //     if (isNaN(resumeScore)) {
-        //         return res.status(500).json({ message: 'Invalid score returned from Python script' });
-        //     }
-
-        //     // Calculate the average score
-        //     const updatedScore = (score + resumeScore) / 2;
-
-        //     // Push the new score to the participants array
-        //     const pushData = {
-        //         email: user.email,
-        //         name: user.username,
-        //         score: updatedScore,
-        //         link: resume
-        //     };
-
-        //     await db.collection('jobs').updateOne(
-        //         { _id: new ObjectId(test_id) },
-        //         { $push: { participants: pushData } }
-        //     );
-
-        //     res.status(200).json({ message: 'Application submitted successfully', updatedScore });
-        // });
+            res.status(200).json({ message: 'Application submitted successfully', updatedScore });
+        });
     } catch (error) {
         console.error('Error processing job application', error);
         res.status(500).json({ message: 'Internal Server Error' });

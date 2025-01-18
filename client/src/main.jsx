@@ -13,6 +13,8 @@ import Register from './components/Register/Register.jsx'
 import Createjob from './components/Createjobs/Createjobs.jsx'
 import Openedjobs from './components/Openedjobs/Openedjobs.jsx'
 import Skilltest from './components/Skilltest/Skilltest.jsx'
+import Jobstatus from './components/JobStatus/JobStatus.jsx'
+import ResumeAnalysis from './components/ResumeAnalysis/ResumeAnalysis.jsx'
 // const router=createBrowserRouter([
 //   {
 //     path:'/',
@@ -46,14 +48,13 @@ const router=createBrowserRouter(
     <Route path='Openedjobs' element={<Openedjobs/>}/>
     <Route path='user/:id' element={<User/>}/>
     <Route path='skilltest/:id' element={<Skilltest/>}/>
+    <Route path='jobstatus/:id' element={<Jobstatus/>}/>
+    <Route path='resumeAnalysis' element={<ResumeAnalysis/>}/>
     
     </Route>
   )
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    
     <RouterProvider router={router}/>
-  </React.StrictMode>,
 )

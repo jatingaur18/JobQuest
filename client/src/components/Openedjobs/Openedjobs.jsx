@@ -22,7 +22,7 @@ const Openedjobs = () => {
     }
   
     const handle = (item) => {
-      nav('/jobstatus', {id: item.ID});
+      nav(`/jobstatus/${item._id}`, );
     }
   
     useEffect(()=>{
@@ -31,19 +31,6 @@ const Openedjobs = () => {
   
     return(
       <>
-      {/* <ComNavbar/>
-      <div>
-        <h1>Company</h1>
-        <ul>
-          {data.map(item => (
-            <li key={item.company} onClick={()=>handle(item)}>
-               {item.title}{item.company}{item.desc}
-            </li>
-          ))}
-        </ul>
-      </div> */}
-
-
       <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
       <ul className="space-y-4 p-2">

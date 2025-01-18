@@ -10,7 +10,7 @@ function User() {
   const [score, setScore] = useState(0);
   const { user } = useContext(UserContext);
   const [resumes, setResumes] = useState([]);
-  const [selectedResume, setSelectedResume] = useState(null); 
+  const [selectedResume, setSelectedResume] = useState({}); 
   const nav = useNavigate();
 
   const fetchResumes = async () => {
@@ -41,7 +41,7 @@ function User() {
   };
 
   const handleResumeSelect = (resume) => {
-    setSelectedResume(resume.path);
+    setSelectedResume(resume);
   };
 
   const handleSubmit = async () => {

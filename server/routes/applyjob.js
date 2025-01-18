@@ -26,22 +26,12 @@ router.post('/', async (req, res) => {
         } else {
             console.log("Found job:", jobs);
         }
-        const fileUrl = resume;
-        const destination = 'C:/Users/hp/OneDrive/Desktop/desktop/projects/ATS/server/resume.pdf';
-
-        const file = fs.createWriteStream(destination);
-
-        http.get(fileUrl, (response) => {
-        response.pipe(file);
-            file.on('finish', () => {
-              file.close(() => {
-                    console.log('File downloaded successfully');
-                });
-            }).on('error', (err) => {
-                fs.unlink(destination, () => {
-                    console.error('Error downloading file:', err);
-                });
-            });
+        const response = await fetch('http://localhost:3000/downloadResume', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({resume: resume.path}),
         });
         const job_desc = jobs.description
         const command = `python test_generator/resume_scorer.py resume.pdf "${job_desc}"`;

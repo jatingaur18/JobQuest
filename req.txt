@@ -1,6 +1,0 @@
-scikit-learn
-nltk
-gensim
-docx2txt
-pypdf2
-

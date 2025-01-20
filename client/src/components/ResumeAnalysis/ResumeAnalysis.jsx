@@ -10,15 +10,17 @@ const Jobs = () => {
   const jsonData = location.state;
   const { user } = useContext(UserContext);
   const { id } = useParams();
+  const [token,setToken] = useState(localStorage.getItem('authToken'));
 
   const ResumeAnalysis = async () => {
     try {
       const response = await fetch(`http://localhost:3000/resumeAnalysis`, {
         method: "POST",
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ resume: jsonData.path }),
+        body: JSON.stringify({ user:user,resume: jsonData.path }),
       });
 
       const json = await response.json();

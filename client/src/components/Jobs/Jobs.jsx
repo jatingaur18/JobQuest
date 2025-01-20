@@ -6,7 +6,7 @@ const Jobs = () => {
   const nav = useNavigate();
   const [data, setData] = useState([]);
   const [jobdata, setJobData] = useState({});
-  const { user } = useContext(UserContext);
+  const { user,setUser } = useContext(UserContext);
 
   const getJobs = async () => {
     const response = await fetch("http://localhost:3000/jobs", {
@@ -28,11 +28,16 @@ const Jobs = () => {
     nav(`/skilltest/${item.id}`)
   }
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    console.log(user)
     if (!user.username) {
       nav('/Login');
     }
     getJobs();
-  }, [user, nav]);
+  }, [nav, setUser]);
 
   return (
     <div className="container mx-auto px-4 min-h-screen">

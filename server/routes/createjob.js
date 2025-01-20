@@ -1,6 +1,7 @@
 const express = require('express')
 const { spawn } = require('child_process');
 const router = express.Router()
+const authenticateToken = require('../middleware/JWTauth');
 
 
 
@@ -89,17 +90,31 @@ const executePythonone = async (script, arg2) => {
 }
 
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   const createjob = req.body;
+  const authuser = req.user;
+  console.log(createjob)
+  console.log(authuser)
+  if (createjob.Company !== authuser.id) {
+    return res.status(505).json({ message: 'token failure' });
+  }
+
   const jobs = db.collection('jobs');
-  
-  createjob['participants'] = [];
-  createjob['test'] = await gettest(await executePythonone('test_generator/test_generator.py', createjob.description));
 
-  console.log(createjob);
+  try {
+    createjob['participants'] = [];
+    createjob['test'] = await gettest(
+      await executePythonone('test_generator/test_generator.py', createjob.description)
+    );
 
-  jobs.insertOne(createjob);
-  res.status(200).send("done");
-})
+    console.log(createjob);
+
+    await jobs.insertOne(createjob);
+    return res.status(200).send("done");
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "An error occurred", error });
+  }
+});
 
 module.exports = router;

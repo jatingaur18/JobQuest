@@ -1,14 +1,27 @@
-import React, { useState, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 import jobquestImage from '../../assets/jobquest.png'; 
+import React, { useContext, useState, useEffect } from 'react';
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+  // Sync context user with localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, [setUser]); // Run only on component mount or when `setUser` changes
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const logout =() =>{
+    setUser({});
+    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+  }
 
   return (
     <header className="shadow sticky z-50 top-0 ">
@@ -23,12 +36,21 @@ function Header() {
           </Link>
           <div className="flex items-center lg:order-2">
             {user.username ? (
-              <Link
-                to="/"
-                className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-              >
-                Hi {user.username} !
-              </Link>
+              <div>
+                <Link
+                  to="/"
+                  className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                >
+                  Hi {user.username} !
+                </Link>
+                <button
+                  className="text-white bg-red-700 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                  onClick={()=>{logout()}}
+                >
+                  logout
+                </button>
+              </div>
+              
             ) : (
               <Link
                 to="/login"

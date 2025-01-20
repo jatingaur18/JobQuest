@@ -12,6 +12,7 @@ function User() {
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState({}); 
   const nav = useNavigate();
+      const [token,setToken] = useState(localStorage.getItem('authToken'));
 
   const fetchResumes = async () => {
     const response = await fetch(`http://localhost:3000/uploadedResumes/:${user.email}`);
@@ -69,6 +70,7 @@ function User() {
       const response = await fetch('http://localhost:3000/applyjob', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(resultData),

@@ -6,12 +6,12 @@ import UserContext from '../../contexts/UserContext';
 
 const Openedjobs = () => {
   
-    const { user } = useContext(UserContext);
+    const { user,setUser } = useContext(UserContext);
     const [data, setData] = useState([]);
     const nav = useNavigate();
     const name = user.username;
-    const getJobs = async () => {
-      const response = await fetch(`http://localhost:3000/company/:${name}`, {
+    const getJobs = async (username) => {
+      const response = await fetch(`http://localhost:3000/company/:${username}`, {
         method: "GET",
       });
   
@@ -26,8 +26,13 @@ const Openedjobs = () => {
     }
   
     useEffect(()=>{
-      getJobs();
-    },[]);
+    var storedUser = localStorage.getItem('user');
+    storedUser=JSON.parse(storedUser)
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    getJobs(storedUser.username);
+    },[setUser]);
   
     return(
       <>

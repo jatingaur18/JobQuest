@@ -5,7 +5,6 @@ const UserContextProvider = ({ children }) => {
     const initialState = {
         email: null,
         username: null,
-        password: null,
         type: null
     };
 

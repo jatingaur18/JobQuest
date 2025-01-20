@@ -2,6 +2,7 @@ const express = require('express')
 const { spawn } = require('child_process');
 const router = express.Router()
 const { exec } = require('child_process');
+const authenticateToken = require('../middleware/JWTauth');
 
 
 
@@ -56,8 +57,14 @@ async function analyzeResume() {
   
 
 
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
     const applydata = req.body;
+    const user= applydata.user;
+    const authuser= req.user;
+    console.log("user ",authuser)
+    if(user.email !==authuser.email && user.username !==authuser.username){
+        res.status(505).json({message:'token faliure'});
+    }
     const fileUrl = applydata.resume;
     const response = await fetch('http://localhost:3000/downloadResume', {
         method: 'POST',

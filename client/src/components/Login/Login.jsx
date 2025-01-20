@@ -27,24 +27,26 @@ function Login(){
     })
 
     const status = response.status;
-    const json = await response.json();
+    var json = await response.json();
+    const token =json.token;
+    json = json.user;
+    localStorage.setItem('authToken', token); 
     if(status === 200){
+      const authuser = {
+        email: json.email,
+        username: json.username,
+        type: json.type
+        }
       console.log("login success");
+      localStorage.setItem('user', JSON.stringify(authuser));
       if(json.type == 'company'){
-        localStorage.setItem('Company', JSON.stringify(json.email));
-        localStorage.setItem('CompanyName', JSON.stringify(json.username));
         nav('/')
       }else{
-        localStorage.setItem('applicant', JSON.stringify(json.email));
         nav('/jobs');
       }
       console.log(json);
-      const em=json.email;
-      const pas=json.password;
-      const un=json.username;
-      const ty=json.type;
 
-      setUser(json)
+      setUser(authuser)
       console.log(user)
     }
     else{

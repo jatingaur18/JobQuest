@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId, GridFSBucket } = require('mongodb');
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
-const http = require('https');
+const authenticateToken = require('../middleware/JWTauth');
 
 
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
     const applydata = req.body;
     const {score, resume, test_id, user } = applydata;
+    const authuser= req.user;
+    if(user.email !==authuser.email || user.username !==authuser.id){
+        res.status(505).json({message:'token faliure'});
+    }
     console.log(applydata);
     
     try {

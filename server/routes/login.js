@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const jwt = require('jsonwebtoken');
+const authenticateToken = require('../middleware/JWTauth');
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 router.post('/', async (req, res) => {
   if (!db) {
@@ -14,7 +17,13 @@ router.post('/', async (req, res) => {
     const foundUser = userarr.find(x => x.email === userdata.email);
     if (foundUser) {
       if (foundUser.password === userdata.password) {
-        res.status(200).json(foundUser);
+        const token = jwt.sign(
+          { email: foundUser.email, id: foundUser.username },
+          JWT_SECRET, 
+          { expiresIn: '1h' }
+        );
+
+        res.status(200).json({user : foundUser, token: token});
       } else {
         res.status(401).json({ message: "Incorrect password" });
       }

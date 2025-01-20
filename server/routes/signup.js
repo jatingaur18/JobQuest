@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const authenticateToken = require('../middleware/JWTauth');
 
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
   const userdata = req.body;
   const users = db.collection('users');
   const userarr = await users.find({}).toArray();

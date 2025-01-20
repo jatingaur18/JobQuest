@@ -1,6 +1,5 @@
 PyPDF2
 docx2txt
-warnings
 os 
 sys
 yaml

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import UserContext from '../../contexts/UserContext';
 import { useNavigate } from "react-router-dom";
-
+export const API_URL = import.meta.env.VITE_API_URL
 const Jobs = () => {
   const nav = useNavigate();
   const [data, setData] = useState([]);
@@ -9,7 +9,7 @@ const Jobs = () => {
   const { user,setUser } = useContext(UserContext);
 
   const getJobs = async () => {
-    const response = await fetch("http://localhost:3000/jobs", {
+    const response = await fetch(`${API_URL}/jobs`, {
       method: "GET",
     });
 

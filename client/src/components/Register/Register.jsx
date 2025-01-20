@@ -1,7 +1,7 @@
 import { useState ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
-
+export const API_URL = import.meta.env.VITE_API_URL
 const Register = () => {
   
   const [Semail, setEmail] = useState("");
@@ -11,7 +11,7 @@ const Register = () => {
   const nav = useNavigate();
   const {user ,setUser}=useContext(UserContext)
   const submit = async () => {
-    const response = await fetch('http://localhost:3000/signup', {
+    const response = await fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: {
         'Content-Type': "application/json",

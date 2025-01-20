@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import UserContext from '../../contexts/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-
+export const API_URL = import.meta.env.VITE_API_URL
 const Jobs = () => {
   const nav = useNavigate();
   const location = useLocation();
@@ -14,7 +14,7 @@ const Jobs = () => {
 
   const ResumeAnalysis = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/resumeAnalysis`, {
+      const response = await fetch(`${API_URL}/resumeAnalysis`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${token}`,

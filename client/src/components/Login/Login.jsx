@@ -2,6 +2,7 @@ import React from 'react'
 import {useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+export const API_URL = import.meta.env.VITE_API_URL
 function Login(){
 
   const {user ,setUser}=useContext(UserContext) 
@@ -15,7 +16,7 @@ function Login(){
   }
 
   const submit = async () => {
-    const response = await fetch('http://localhost:3000/login', {
+    const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

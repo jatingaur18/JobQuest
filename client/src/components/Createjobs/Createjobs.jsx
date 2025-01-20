@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+export const API_URL = import.meta.env.VITE_API_URL
 
 const Createjob = () => {
     const nav = useNavigate();
@@ -25,7 +26,7 @@ const Createjob = () => {
   const submit = async (e) => {
     e.preventDefault();
     console.log(title,desc)
-    const response = await fetch('http://localhost:3000/createjob', {
+    const response = await fetch(`${API_URL}/createjob`, {
       method: "POST",
       headers: {
         'Authorization': `Bearer ${token}`,

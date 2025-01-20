@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
-
+export const API_URL = import.meta.env.VITE_API_URL
 
 
 const Openedjobs = () => {
@@ -11,7 +11,7 @@ const Openedjobs = () => {
     const nav = useNavigate();
     const name = user.username;
     const getJobs = async (username) => {
-      const response = await fetch(`http://localhost:3000/company/:${username}`, {
+      const response = await fetch(`${API_URL}/company/:${username}`, {
         method: "GET",
       });
   

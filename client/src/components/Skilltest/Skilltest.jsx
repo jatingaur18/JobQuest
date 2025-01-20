@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
-
+export const API_URL = import.meta.env.VITE_API_URL
 function User() {
   const { id } = useParams();
   const [ques, setQues] = useState([]);
@@ -15,14 +15,14 @@ function User() {
       const [token,setToken] = useState(localStorage.getItem('authToken'));
 
   const fetchResumes = async () => {
-    const response = await fetch(`http://localhost:3000/uploadedResumes/:${user.email}`);
+    const response = await fetch(`${API_URL}/uploadedResumes/:${user.email}`);
     const data = await response.json();
     console.log(data);
     setResumes(data);
   };
 
   const gettest = async () => {
-    const response = await fetch(`http://localhost:3000/gettest/${id}`, {
+    const response = await fetch(`${API_URL}/gettest/${id}`, {
       method: 'GET',
     });
 
@@ -67,7 +67,7 @@ function User() {
     console.log(resultData); // Check the data being sent
   
     try {
-      const response = await fetch('http://localhost:3000/applyjob', {
+      const response = await fetch(`${API_URL}/applyjob`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

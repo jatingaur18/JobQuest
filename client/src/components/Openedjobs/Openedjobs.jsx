@@ -6,12 +6,12 @@ import UserContext from '../../contexts/UserContext';
 
 const Openedjobs = () => {
   
-    const { user } = useContext(UserContext);
+    const { user,setUser } = useContext(UserContext);
     const [data, setData] = useState([]);
     const nav = useNavigate();
     const name = user.username;
-    const getJobs = async () => {
-      const response = await fetch(`http://localhost:3000/company/:${name}`, {
+    const getJobs = async (username) => {
+      const response = await fetch(`http://localhost:3000/company/:${username}`, {
         method: "GET",
       });
   
@@ -22,28 +22,20 @@ const Openedjobs = () => {
     }
   
     const handle = (item) => {
-      nav('/jobstatus', {id: item.ID});
+      nav(`/jobstatus/${item._id}`, );
     }
   
     useEffect(()=>{
-      getJobs();
-    },[]);
+    var storedUser = localStorage.getItem('user');
+    storedUser=JSON.parse(storedUser)
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    getJobs(storedUser.username);
+    },[setUser]);
   
     return(
       <>
-      {/* <ComNavbar/>
-      <div>
-        <h1>Company</h1>
-        <ul>
-          {data.map(item => (
-            <li key={item.company} onClick={()=>handle(item)}>
-               {item.title}{item.company}{item.desc}
-            </li>
-          ))}
-        </ul>
-      </div> */}
-
-
       <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
       <ul className="space-y-4 p-2">

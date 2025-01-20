@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
+import UserContext from '../../contexts/UserContext';
 
 const Register = () => {
   
@@ -8,7 +9,7 @@ const Register = () => {
   const [SUsername, setUsername] = useState("");
   const [SType, setType] = useState("");
   const nav = useNavigate();
-
+  const {user ,setUser}=useContext(UserContext)
   const submit = async () => {
     const response = await fetch('http://localhost:3000/signup', {
       method: "POST",
@@ -22,8 +23,13 @@ const Register = () => {
         type: SType
       }),
     })
-
+    
     if(response.status == 200){
+      const user = {
+        email: json.email,
+        username: json.username,
+        type: json.type
+      } 
       if(SType === 'applicant'){
         localStorage.setItem('applicant', JSON.stringify(Semail));
         nav('/jobs')

@@ -7,14 +7,19 @@ const Createjob = () => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [jobID, setID] = useState("");
-    const company = JSON.parse(localStorage.getItem('CompanyName'));
-    const { user } = useContext(UserContext);
+    const { user,setUser } = useContext(UserContext);
+    const [token,setToken] = useState(localStorage.getItem('authToken'));
     
     useEffect(() => {
-        if (!user.username || !user.type == 'company') {
-          nav('/Login');
-        }
-      }, [user, nav]);
+      const storedUser = localStorage.getItem('user');  
+      console.log(storedUser)
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      if (!storedUser.type == 'company') {
+        nav('/Login');
+      }
+    }, [ nav,setUser]);
 
 
   const submit = async (e) => {
@@ -23,11 +28,12 @@ const Createjob = () => {
     const response = await fetch('http://localhost:3000/createjob', {
       method: "POST",
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         ID: jobID,
-        Company: company,
+        Company: user.username,
         title: title,
         description: desc
       })

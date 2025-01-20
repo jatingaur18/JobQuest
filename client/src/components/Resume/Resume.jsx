@@ -1,7 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import UserContext from '../../contexts/UserContext';
+import { useNavigate , useLocation } from 'react-router-dom';
 
 function Contact() {
+  const nav = useNavigate();
   const [file, setFile] = useState(null);
   const { user } = useContext(UserContext);
   const [resumes, setResumes] = useState([]);
@@ -12,6 +14,9 @@ function Contact() {
     console.log(data);
     setResumes(data);
   };
+  const handleAnalysis = async (resume)=>{
+    nav(`/resumeAnalysis`,{ state: resume })
+  }
   useEffect(() => {
     // Fetch resumes when the component mounts
 
@@ -65,9 +70,21 @@ function Contact() {
         {resumes.map((resume, index) => (
           <div
             key={index}
-            className="w-64 h-32 border-2 border-violet-700 bg-white text-violet-700 flex items-center justify-center p-4 rounded-lg shadow-md"
+            className="w-64 h-32 border-2 border-violet-500 flex flex-col items-center justify-center p-4 rounded-lg shadow-md"
           >
+            <label className="text-violet-700 cursor-pointer mb-2">
+
             {resume.filename}
+            </label>
+            <div>
+
+          <button 
+            className="mt-2 px-4 py-1 bg-violet-500 text-white font-semibold rounded-lg hover:bg-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            onClick={()=>{handleAnalysis(resume)}}
+          >
+            Analyise
+          </button>
+            </div>
           </div>
         ))}
         <div

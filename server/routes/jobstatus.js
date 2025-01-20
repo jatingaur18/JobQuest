@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router()
+const { ObjectId } = require('mongodb');
 
-router.post('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const jobID = req.params.id.slice(1);
-  console.log(jobID);
-  const jobsarr = await db.collection('jobs').find({}).toArray();
-  foundjob = jobsarr.find(x => x.ID === 'googlebackend');
+  console.log("jobid ",jobID);
+  const foundjob = await db.collection('jobs').findOne({ _id: new ObjectId(jobID) });
+  console.log(foundjob)
   if(foundjob){
     const dataToSend = (foundjob.participants).sort((a,b) => b.score - a.score)
     console.log(dataToSend);

@@ -8,7 +8,7 @@ router.get('/:email', async (req, res) => {
 
     for (let i=0; i<resume.length; i++){
         if(resume[i].email===email){
-            resarr.push({filename:resume[i].filename ,path:resume[i].path});
+            resarr.push({filename:resume[i].filename ,path:resume[i].path,pdf:resume[i].pdf});
         }
     }
     console.log(email)

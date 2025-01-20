@@ -1,0 +1,52 @@
+name: Formatter & CI
+on:
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch:
+
+jobs:
+  build_job:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        project: [server, client] 
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      # Setup Node.js for the specified version in the matrix
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Use Python
+        if:  matrix.project == 'server'
+        uses:  actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          
+      # Install dependencies for the respective project
+      - name: Install Dependencies
+        run: |
+          cd ${{ matrix.project }}
+          npm ci
+          if [ "${{ matrix.project }}" == "server" ]; then
+          python -m pip intall --upgrade pip
+          pip install -r req.txt
+
+
+      - name: Build and Run
+        env:
+          TESTING_ENV: ${{ secrets.TESTING_ENV }}
+        run: |
+          cd ${{ matrix.project }}
+          if [ "${{ matrix.project }}" == "server" ]; then
+            echo "$TESTING_ENV" > .env
+            timeout --preserve-status 5s node index.js || true
+  
+          elif [ "${{ matrix.project }}" == "client" ]; then
+            npm run build
+          fi

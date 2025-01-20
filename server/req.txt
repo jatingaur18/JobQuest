@@ -1,6 +1,5 @@
 PyPDF2
 docx2txt
-sys
 yaml
 google.generativeai
 re

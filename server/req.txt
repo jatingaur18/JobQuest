@@ -1,8 +1,4 @@
 PyPDF2
 docx2txt
-nltk
-warnings
-os 
-sys
-nltk
-gensim
+google.generativeai
+python-dotenv

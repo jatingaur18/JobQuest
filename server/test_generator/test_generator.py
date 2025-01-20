@@ -4,11 +4,14 @@ import google.generativeai as genai
 import yaml
 # !@#$*
 
-with open(r'test_generator/API.yml','r') as file:
-    API = yaml.safe_load(file)
+from dotenv import load_dotenv
+import os
+ 
+load_dotenv()
+database_url = os.getenv("key")
 
 
-google_API = API['key'] 
+google_API = database_url  
 
 genai.configure(api_key = google_API)
 

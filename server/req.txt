@@ -1,6 +1,5 @@
 PyPDF2
 docx2txt
-yaml
 google.generativeai
 re
 python-dotenv

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import UserContext from '../../contexts/UserContext';
 import { useNavigate , useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-
+export const API_URL = import.meta.env.VITE_API_URL
 const Jobs = () => {
   const nav = useNavigate();
   const [data, setData] = useState([]);
@@ -11,7 +11,7 @@ const Jobs = () => {
   const { id } = useParams();
 
   const getJobstatus = async () => {
-    const response = await fetch(`http://localhost:3000/jobstatus/:${id}`, {
+    const response = await fetch(`${API_URL}/jobstatus/:${id}`, {
       method: "GET",
     });
     console.log(response.body.json);

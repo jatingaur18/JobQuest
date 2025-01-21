@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import UserContext from '../../contexts/UserContext';
 import { useNavigate , useLocation } from 'react-router-dom';
-
+export const API_URL = import.meta.env.VITE_API_URL
 function Contact() {
   const nav = useNavigate();
   const [file, setFile] = useState(null);
@@ -9,7 +9,7 @@ function Contact() {
   const [resumes, setResumes] = useState([]);
 
   const fetchResumes = async () => {
-    const response = await fetch(`http://localhost:3000/uploadedResumes/:${user.email}`);
+    const response = await fetch(`${API_URL}/uploadedResumes/:${user.email}`);
     const data = await response.json();
     console.log(data);
     setResumes(data);
@@ -38,7 +38,7 @@ function Contact() {
     formData.append("file", file); // Ensure the key matches backend expectations
   
     try {
-      const response = await fetch('http://localhost:3000/uploadresume', {
+      const response = await fetch(`${API_URL}/uploadresume`, {
         method: "POST",
         headers: {
           email: storeEmail, // Add the email in headers

@@ -17,7 +17,7 @@ const Createjob = () => {
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
-      if (!storedUser.type == 'company') {
+      else {
         nav('/Login');
       }
     }, [ nav,setUser]);

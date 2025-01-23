@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
@@ -40,6 +40,8 @@ function Login(){
         }
       console.log("login success");
       localStorage.setItem('user', JSON.stringify(authuser));
+      setUser(authuser)
+      console.log(user)
       if(json.type == 'company'){
         nav('/')
       }else{
@@ -47,14 +49,22 @@ function Login(){
       }
       console.log(json);
 
-      setUser(authuser)
-      console.log(user)
     }
     else{
       console.log("incorrect login credentials");
     }
 
   }
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser); // Sync context with local storage
+      nav(-1); // Redirect to home page
+    }
+  }, [nav, setUser]);
+
+
 
   return(
     <div className="flex pt-24 justify-center h-screen">

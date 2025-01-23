@@ -24,7 +24,7 @@ async function analyzeResume() {
   
         console.log('Sections is empty, retrying...');
       }
-  
+      throw new Error('Failed to process resume analysis.');
       // Return the JSON object
     } catch (error) {
       console.error('Error analyzing resume:', error);

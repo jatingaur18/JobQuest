@@ -1,7 +1,7 @@
 const express = require('express')
-const { spawn } = require('child_process');
 const router = express.Router()
 const authenticateToken = require('../middleware/JWTauth');
+const {test_gen} = require('../test_generator/test_generator') 
 
 
 
@@ -64,32 +64,6 @@ async function gettest(text){
   return Q_list
 }
 
-
-const executePythonone = async (script, arg2) => {
-  const py = spawn("python", [script, arg2]);
-
-  const result = await new Promise((resolve, reject) => {
-    let output;
-
-      py.stdout.on('data', (data) => {
-        output = data.toString();
-      });
-
-      py.stderr.on("data", (data) => {
-        console.error(`[python] Error occured: ${data}`);
-        reject(`Error occured in ${script}`);
-      });
-
-      py.on("exit", (code) => {
-        console.log(`Child process exited with code ${code}`);
-        resolve(output);
-      });
-  });
-
-  return result;
-}
-
-
 router.post('/', authenticateToken, async (req, res) => {
   const createjob = req.body;
   const authuser = req.user;
@@ -104,7 +78,7 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     createjob['participants'] = [];
     createjob['test'] = await gettest(
-      await executePythonone('test_generator/test_generator.py', createjob.description)
+      await test_gen(createjob.description)
     );
 
     console.log(createjob);

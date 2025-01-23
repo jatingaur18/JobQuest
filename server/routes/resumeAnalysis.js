@@ -1,28 +1,7 @@
 const express = require('express')
-const { spawn } = require('child_process');
 const router = express.Router()
-const { exec } = require('child_process');
 const authenticateToken = require('../middleware/JWTauth');
-
-
-
-async function executePythonone(scriptPath, description) {
-    return new Promise((resolve, reject) => {
-        const command = `python ${scriptPath} "${description}"`;
-
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error executing Python script: ${stderr}`);
-                reject(error);
-                return;
-            }
-
-            resolve(stdout.trim());
-        });
-    });
-}
-
-
+const {analyze_Resume} = require('../test_generator/resumeAnalysis.js')
 
 async function analyzeResume() {
     try {
@@ -31,14 +10,15 @@ async function analyzeResume() {
       let t=5;
       while (t--) {
         // Run the Python program and get the output
-        const pythonOutput = await executePythonone('./test_generator/resumeAnalysis.py', './resume.pdf');
+        const pythonOutput = await analyze_Resume();
         console.log('Python Output:', pythonOutput);
   
         // Parse the output into JSON
-        jsonOutput = JSON.parse(pythonOutput);
+        // jsonOutput = JSON.parse(pythonOutput);
   
         // Check if Sections is not empty
-        if (jsonOutput.sections && Object.keys(jsonOutput.sections).length > 0) {
+        if (pythonOutput.sections && Object.keys(pythonOutput.sections).length > 0) {
+          return pythonOutput;
           break; // Exit the loop if Sections is not empty
         }
   
@@ -46,7 +26,6 @@ async function analyzeResume() {
       }
   
       // Return the JSON object
-      return jsonOutput;
     } catch (error) {
       console.error('Error analyzing resume:', error);
       throw new Error('Failed to process resume analysis.');

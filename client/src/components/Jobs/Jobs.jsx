@@ -32,8 +32,7 @@ const Jobs = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    console.log(user)
-    if (!user.username) {
+    else{
       nav('/Login');
     }
     getJobs();

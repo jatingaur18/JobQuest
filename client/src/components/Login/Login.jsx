@@ -2,20 +2,38 @@ import React, { useEffect } from 'react'
 import {useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+import Popup from '../Popup/Popup';
+import {Turnstile } from '@marsidev/react-turnstile';
+
 export const API_URL = import.meta.env.VITE_API_URL
+export const SITE_KEY = import.meta.env.VITE_SITE_KEY || '1x00000000000000000000AA';
 function Login(){
 
   const {user ,setUser}=useContext(UserContext) 
-     
+  const [showPopup, setShowPopup] = useState(false);
   const [Uemail, setEmail] = useState("");
   const [Upassword, setPassword] = useState("");
+  const [mess, setMess] = useState("");
+  const [captchaToken, setCaptchaToken] = useState('');
+  
   const nav = useNavigate();
 
   const register = async () => {
     nav('/Register')
   }
+  const Popmess = async (mess)=>{
+    setMess(mess);
+    setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 2000);
+  }
 
   const submit = async () => {
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA.');
+      return;
+    }
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
@@ -23,7 +41,8 @@ function Login(){
       },
       body: JSON.stringify({
         email: Uemail,
-        password: Upassword
+        password: Upassword,
+        cf_turnstile_response: captchaToken
       })
     })
 
@@ -51,6 +70,7 @@ function Login(){
 
     }
     else{
+      Popmess("incorrect login credentials")
       console.log("incorrect login credentials");
     }
 
@@ -68,7 +88,8 @@ function Login(){
 
   return(
     <div className="flex pt-24 justify-center h-screen">
-      <div className="bg-white p-8 border-4 border-violet-900 rounded-lg w-80 h-96 flex flex-col justify-between">
+      {showPopup && <Popup message= {mess} />}
+      <div className="bg-white p-8 border-4 border-violet-900 rounded-lg w-100 h-96 flex flex-col justify-between">
         <h1 className="text-center text-3xl font-bold">Login</h1>
         <div className="space-y-4">
           <label className="block">
@@ -102,6 +123,17 @@ function Login(){
             >
               Register
             </button>
+            <div>
+          <Turnstile
+                options={{
+                  theme: 'light',
+                  size: 'normal',
+                }}
+                siteKey={SITE_KEY}
+                onError={() => alert('CAPTCHA failed Try again')}
+                onSuccess={(token) => setCaptchaToken(token)}
+              />
+          </div>
           </div>
         </div>
       </div>

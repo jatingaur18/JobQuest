@@ -3,6 +3,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 export const API_URL = import.meta.env.VITE_API_URL
+import Popup from '../Popup/Popup';
+
 function User() {
   const { id } = useParams();
   const [ques, setQues] = useState([]);
@@ -11,6 +13,9 @@ function User() {
   const { user } = useContext(UserContext);
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState({}); 
+    const [showPopup, setShowPopup] = useState(false);
+    const [mess, setMess] = useState("");
+    const [color, setColor] = useState("bg-red-600");
   const nav = useNavigate();
       const [token,setToken] = useState(localStorage.getItem('authToken'));
 
@@ -21,10 +26,22 @@ function User() {
     setResumes(data);
   };
 
+
+  const Popmess = async (mess,color)=>{
+    setMess(mess);
+    setColor(color)
+    setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 2000);
+  }
+
   const gettest = async () => {
     const response = await fetch(`${API_URL}/gettest/${id}`, {
       method: 'GET',
     });
+
+
 
     const json = await response.json();
     if (response.status === 200) {
@@ -55,7 +72,6 @@ function User() {
     });
   
     setScore(tempScore);
-    alert(`Your score is: ${tempScore}/${ques.length}`);
   
     const resultData = {
       score: tempScore,
@@ -77,16 +93,19 @@ function User() {
       });
       const resData = await response.json();
       console.log('Data submitted successfully:', resData);
+      Popmess("Submitted Successfully","bg-green-500")
+
     } catch (error) {
       console.error('Error submitting data:', error);
+      Popmess("Failed to Submit","bg-red-500")
     }
   };
   
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+      {showPopup && <Popup message= {mess} bgColor={color} />}
       <h1 className="text-2xl font-bold text-violet-900 mb-6">Skill Test</h1>
-
 
       <div className="mb-6 w-full max-w-4xl p-4 border-2 border-violet-900 bg-white rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-violet-900 mb-4">Select a Resume</h2>

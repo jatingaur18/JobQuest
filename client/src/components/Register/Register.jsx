@@ -1,16 +1,23 @@
 import { useState ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+import {Turnstile } from '@marsidev/react-turnstile';
 export const API_URL = import.meta.env.VITE_API_URL
+export const SITE_KEY = import.meta.env.VITE_SITE_KEY || '1x00000000000000000000AA';
 const Register = () => {
   
   const [Semail, setEmail] = useState("");
   const [Spassword, setPassword] = useState("");
   const [SUsername, setUsername] = useState("");
   const [SType, setType] = useState("");
+  const [captchaToken, setCaptchaToken] = useState('');
   const nav = useNavigate();
   const {user ,setUser}=useContext(UserContext)
   const submit = async () => {
+    if (!captchaToken) {
+    alert('Please complete the CAPTCHA.');
+    return;
+  }
     const response = await fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: {
@@ -20,6 +27,7 @@ const Register = () => {
         email: Semail,
         password: Spassword,
         username: SUsername,
+        cf_turnstile_response: captchaToken,
         type: SType
       }),
     })
@@ -90,6 +98,18 @@ const Register = () => {
         >
           Submit
         </button>
+        <div>
+           <Turnstile
+                          
+                          options={{
+                            theme: 'light',
+                            
+                          }}
+                          siteKey={SITE_KEY}
+                          onError={() => alert('CAPTCHA failed Try again')}
+                          onSuccess={(token) => setCaptchaToken(token)}
+                        />
+          </div>
       </div>
     </div>
   </div>

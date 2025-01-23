@@ -61,7 +61,7 @@ const parseResponseToJson = (responseText) => {
  * @param {string} resumePath - Path to the PDF resume file
  * @returns {Promise<Object>} Structured analysis of the resume
  */
-const analyze_Resume = async (resumePath = '/app/resume.pdf') => {
+const analyze_Resume = async (resumePath = '/App/resume.pdf') => {
     try {
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(GOOGLE_API_KEY);

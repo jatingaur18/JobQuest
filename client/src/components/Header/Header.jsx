@@ -1,10 +1,12 @@
 import { Link, NavLink } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+import { useNavigate } from "react-router-dom";
 import jobquestImage from '../../assets/jobquest.png'; 
 import React, { useContext, useState, useEffect } from 'react';
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
+  const nav = useNavigate();
 
   // Sync context user with localStorage on mount
   useEffect(() => {
@@ -21,6 +23,7 @@ function Header() {
     setUser({});
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
+    nav('/')
   }
 
   return (

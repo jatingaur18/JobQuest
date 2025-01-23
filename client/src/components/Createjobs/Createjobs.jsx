@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
+import Popup from '../Popup/Popup';
 export const API_URL = import.meta.env.VITE_API_URL
 
 const Createjob = () => {
@@ -9,6 +10,10 @@ const Createjob = () => {
     const [desc, setDesc] = useState("");
     const [jobID, setID] = useState("");
     const { user,setUser } = useContext(UserContext);
+    const [showPopup, setShowPopup] = useState(false);
+    const [mess, setMess] = useState("");
+    const [color, setColor] = useState("bg-red-600");
+  
     const [token,setToken] = useState(localStorage.getItem('authToken'));
     
     useEffect(() => {
@@ -21,6 +26,14 @@ const Createjob = () => {
         nav('/Login');
       }
     }, [ nav,setUser]);
+    const Popmess = async (mess,color)=>{
+      setMess(mess);
+      setColor(color)
+      setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 2000);
+    }
 
 
   const submit = async (e) => {
@@ -43,14 +56,17 @@ const Createjob = () => {
 
     const status = response.status;
     if (status === 200) {
+      Popmess("Job Created","bg-green-500")
       console.log("success");
     } else {
+      Popmess("Failed to Create Job","bg-red-500")
       console.log("failure");
     }
   }
 
   return (
     <div className="p-8 bg-gray-100">
+      {showPopup && <Popup message= {mess} bgColor={color} />}
       <h1 className="text-center text-6xl font-bold mb-4">Create a Job</h1>
 
       <form onSubmit={submit}>

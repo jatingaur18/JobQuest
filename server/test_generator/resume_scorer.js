@@ -14,7 +14,7 @@ dotenv.config();
  */
 const evaluateResume = async (jobDescription) => {
     try {
-        const resumePath = '/app/resume.pdf'
+        const resumePath = '/App/resume.pdf'
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(process.env.KEY);
         const model = genai.getGenerativeModel({ model: 'gemini-pro' });

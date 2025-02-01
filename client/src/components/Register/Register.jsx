@@ -1,23 +1,21 @@
 import { useState ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
-import {Turnstile } from '@marsidev/react-turnstile';
+import Popup from "../Popup/Popup";
+
 export const API_URL = import.meta.env.VITE_API_URL
-export const SITE_KEY = import.meta.env.VITE_SITE_KEY || '1x00000000000000000000AA';
+
 const Register = () => {
   
   const [Semail, setEmail] = useState("");
   const [Spassword, setPassword] = useState("");
   const [SUsername, setUsername] = useState("");
-  const [SType, setType] = useState("");
-  const [captchaToken, setCaptchaToken] = useState('');
+  const [SType, setType] = useState("company");
+  const [mess, setMess] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
   const nav = useNavigate();
   const {user ,setUser}=useContext(UserContext)
   const submit = async () => {
-    if (!captchaToken) {
-    alert('Please complete the CAPTCHA.');
-    return;
-  }
     const response = await fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: {
@@ -27,30 +25,37 @@ const Register = () => {
         email: Semail,
         password: Spassword,
         username: SUsername,
-        cf_turnstile_response: captchaToken,
         type: SType
       }),
     })
     
     if(response.status == 200){
       const user = {
-        email: json.email,
-        username: json.username,
-        type: json.type
+        email: Semail,
+        username: Semail,
+        type: SType
       } 
-      if(SType === 'applicant'){
-        localStorage.setItem('applicant', JSON.stringify(Semail));
-        nav('/jobs')
-      }else{
-        localStorage.setItem('Company', JSON.stringify(Semail));
-        localStorage.setItem('CompanyName', JSON.stringify(SUsername));
-        nav('/company')
-      }
+      setUser(user);
+      localStorage.setItem('user',JSON.stringify(user));
+      nav('/userProfile')
+      Popmess("Registration Successfull")
     }
+    else{
+      Popmess("Registration Failed")
+    }
+  }
+
+  const Popmess = async (mess)=>{
+    setMess(mess);
+    setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 2000);
   }
 
   return(
     <div className="flex items-center justify-center h-screen bg-gray-100">
+    {showPopup && <Popup message= {mess} />}
     <div className="bg-white p-8 border-4 border-violet-900 rounded-lg w-96 space-y-6">
       <h1 className="text-center text-2xl font-bold">Register</h1>
       <label className="block">
@@ -85,7 +90,6 @@ const Register = () => {
           id="mode"
           onChange={(e) => setType(e.target.value)}
         >
-          <option value="none">None</option>
           <option value="company">Company</option>
           <option value="applicant">Applicant</option>
         </select>
@@ -98,18 +102,6 @@ const Register = () => {
         >
           Submit
         </button>
-        <div>
-           <Turnstile
-                          
-                          options={{
-                            theme: 'light',
-                            
-                          }}
-                          siteKey={SITE_KEY}
-                          onError={() => alert('CAPTCHA failed Try again')}
-                          onSuccess={(token) => setCaptchaToken(token)}
-                        />
-          </div>
       </div>
     </div>
   </div>

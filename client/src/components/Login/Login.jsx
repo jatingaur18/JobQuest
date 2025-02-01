@@ -3,10 +3,7 @@ import {useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 import Popup from '../Popup/Popup';
-import {Turnstile } from '@marsidev/react-turnstile';
-
 export const API_URL = import.meta.env.VITE_API_URL
-export const SITE_KEY = import.meta.env.VITE_SITE_KEY || '1x00000000000000000000AA';
 function Login(){
 
   const {user ,setUser}=useContext(UserContext) 
@@ -14,7 +11,6 @@ function Login(){
   const [Uemail, setEmail] = useState("");
   const [Upassword, setPassword] = useState("");
   const [mess, setMess] = useState("");
-  const [captchaToken, setCaptchaToken] = useState('');
   
   const nav = useNavigate();
 
@@ -30,10 +26,7 @@ function Login(){
   }
 
   const submit = async () => {
-    if (!captchaToken) {
-      alert('Please complete the CAPTCHA.');
-      return;
-    }
+    
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
@@ -41,8 +34,7 @@ function Login(){
       },
       body: JSON.stringify({
         email: Uemail,
-        password: Upassword,
-        cf_turnstile_response: captchaToken
+        password: Upassword
       })
     })
 
@@ -60,7 +52,6 @@ function Login(){
       console.log("login success");
       localStorage.setItem('user', JSON.stringify(authuser));
       setUser(authuser)
-      console.log(user)
       if(json.type == 'company'){
         nav('/')
       }else{
@@ -123,17 +114,6 @@ function Login(){
             >
               Register
             </button>
-            <div>
-          <Turnstile
-                options={{
-                  theme: 'light',
-                  size: 'normal',
-                }}
-                siteKey={SITE_KEY}
-                onError={() => alert('CAPTCHA failed Try again')}
-                onSuccess={(token) => setCaptchaToken(token)}
-              />
-          </div>
           </div>
         </div>
       </div>

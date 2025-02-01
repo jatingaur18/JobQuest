@@ -19,31 +19,35 @@ router.post('/', upload.single('file'), async (req, res) => {
   try {
     const filePath = req.file.path;
 
+    // Uploading the image to Cloudinary as a PDF
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: 'image',
       format: 'pdf',
       folder: 'resumes',
     });
 
+    // Uploading the raw PDF file
     const pdf = await cloudinary.uploader.upload(filePath, {
-      folder: 'resumes', 
+      folder: 'resumes',
       resource_type: 'raw',
     });
 
     // Save file details to the database
-    const resume = await db.collection('resume');
+    const resume = db.collection('resume');
     await resume.insertOne({
       email: req.headers.email,
       filename: req.file.originalname,
       path: pdf.secure_url,
-      pdf: result.secure_url
+      pdf: result.secure_url,
     });
 
+    // Sending the success response with the file URL
     res.status(200).json({
       message: 'File uploaded successfully',
       fileUrl: result.secure_url,
     });
   } catch (error) {
+    // Logging the error and sending a response
     console.error('Error uploading file:', error);
     res.status(500).json({ error: 'Failed to upload file' });
   }

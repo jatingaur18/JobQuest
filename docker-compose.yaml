@@ -9,3 +9,11 @@ services:
       - "3000:3000"  # Map the port for the Node.js server
     volumes:
       - ./server:/app  # Mount the current directory to the container (optional for development)
+
+  frontend:
+    image: frontend
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5173"

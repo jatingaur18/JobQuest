@@ -2,6 +2,7 @@ const pdfParse = require('pdf-parse');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 const fs = require('fs').promises;
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -61,7 +62,7 @@ const parseResponseToJson = (responseText) => {
  * @param {string} resumePath - Path to the PDF resume file
  * @returns {Promise<Object>} Structured analysis of the resume
  */
-const analyze_Resume = async (resumePath = '/App/resume.pdf') => {
+const analyze_Resume = async (resumePath = path.join(__dirname, '../resume.pdf')) => {
     try {
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(GOOGLE_API_KEY);

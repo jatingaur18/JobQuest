@@ -1,2 +1,3 @@
 ../JobQuest/test_generator/API.yml
 ../JobQuest/server/test_generator/API.yml
+*.pem

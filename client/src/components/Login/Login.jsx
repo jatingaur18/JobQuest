@@ -14,6 +14,7 @@ function Login() {
   const [mess, setMess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
+  const [showTestPrompt, setShowTestPrompt] = useState(true); 
 
   const register = () => nav('/Register');
 
@@ -22,6 +23,10 @@ function Login() {
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 2000);
   };
+
+  useEffect(() => {
+    setTimeout(() => setShowTestPrompt(false), 150000);
+  }, []);
 
   const submit = async () => {
     setIsLoading(true);
@@ -72,6 +77,32 @@ function Login() {
           <Popup message={mess} />
         </div>
       )}
+
+        {showTestPrompt && (
+          <div className="fixed mt-20 top-5 left-1/2 transform -translate-x-1/2 bg-white shadow-lg p-4 rounded-lg flex items-center gap-4">
+            <span>Login as:</span>
+            <button
+              className="px-3 py-1 bg-cyan-800 text-white rounded-md"
+              onClick={() => {
+                setEmail("jatin22101@iiitnr.edu.in")
+                setPassword("jatingaur18")
+                setShowTestPrompt(false);
+              }}
+            >
+              Test Applicant
+            </button>
+            <button
+              className="px-3 py-1 bg-emerald-600 text-white rounded-md"
+              onClick={() => {
+                setEmail("google@hotmail.com")
+                setPassword("microsoft")
+                setShowTestPrompt(false);
+              }}
+            >
+              Test Company
+            </button>
+          </div>
+        )}
       
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border-2 border-violet-200">
         <div>
@@ -93,6 +124,7 @@ function Login() {
                 type="email"
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
                 placeholder="Email address"
+                value={Uemail}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -105,6 +137,7 @@ function Login() {
                 type="password"
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
                 placeholder="Password"
+                value={Upassword}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>

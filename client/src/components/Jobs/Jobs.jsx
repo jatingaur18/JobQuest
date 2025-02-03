@@ -67,7 +67,7 @@ const Jobs = () => {
         ) : (
           // Jobs List
           <div className="grid gap-6 md:gap-8">
-            {data.map(item => (
+            {data.slice().reverse().map(item => (
               <div 
                 key={item.id} 
                 className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-300 overflow-hidden"

@@ -15,6 +15,7 @@ const Message = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [lastFetchTimes, setLastFetchTimes] = useState({});
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -37,7 +38,7 @@ const Message = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [nav, setUser]);
 
-  const fetchUserChats = async (userData) => {
+  const fetchUserChats = async (userData, forceRefresh = false) => {
     try {
       const response = await fetch(`${API_URL}/fetchChatList`, {
         method: 'POST',
@@ -49,8 +50,21 @@ const Message = () => {
       });
 
       const data = await response.json();
+      console.log(data.chat)
       if (response.ok) {
-        setChatsList(data.chat || []);
+        // Sort chats by last message time
+        const sortedChats = (data.chat || []).sort((a, b) => 
+          new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
+        );
+        // Mark chats as unread based on last fetch time
+        const updatedChats = sortedChats.map(chat => ({
+          ...chat,
+          isUnread: !chat.lastFetchTime || 
+                    new Date(chat.lastMessageTime) > new Date(chat.lastFetchTime) 
+                    
+        }));
+
+        setChatsList(updatedChats);
       }
     } catch (error) {
       console.error('Error fetching chats:', error);
@@ -75,6 +89,16 @@ const Message = () => {
       if (response.ok) {
         setChatMessages(data || []);
         setSelectedChat(chatID);
+
+        // Update last fetch time for this chat
+        setLastFetchTimes(prev => ({
+          ...prev,
+          [chatID]: new Date().toISOString()
+        }));
+
+        // Refetch and update chat list
+        fetchUserChats(user);
+
         // Close sidebar on mobile after selecting chat
         if (window.innerWidth < 768) {
           setIsSidebarOpen(false);
@@ -164,10 +188,17 @@ const Message = () => {
             <div 
               key={chat.chatID} 
               onClick={() => fetchChatMessages(chat.chatID)}
-              className={`p-3 border-b cursor-pointer hover:bg-gray-200 ${selectedChat === chat.chatID ? 'bg-blue-100' : ''}`}
+              className={`p-3 border-b cursor-pointer hover:bg-gray-200 ${
+                selectedChat === chat.chatID ? 'bg-blue-100' : ''
+              } ${chat.isUnread ? 'font-bold bg-blue-50' : ''}`}
             >
               <div className="flex justify-between items-center">
-                <span>{chat.chatWith}</span>
+                <div className="flex items-center">
+                  <span>{chat.chatWith}</span>
+                  {chat.isUnread && (
+                    <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                  )}
+                </div>
                 <span className="text-sm text-gray-500">
                   {chat.lastMessageTime ? new Date(chat.lastMessageTime).toLocaleTimeString() : ''}
                 </span>

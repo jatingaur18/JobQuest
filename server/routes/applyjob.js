@@ -3,7 +3,7 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const authenticateToken = require('../middleware/JWTauth');
 const { evaluateResume } = require('../test_generator/resume_scorer.js');
-
+const URL = process.env.API_URL || 'your-secret-key';
 
 router.post('/', authenticateToken, async (req, res) => {
     const applydata = req.body;
@@ -29,7 +29,7 @@ router.post('/', authenticateToken, async (req, res) => {
             console.log("Found job:", jobs);
         }
 
-        const response = await fetch('http://localhost:3000/downloadResume', {
+        const response = await fetch(`${URL}/downloadResume`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

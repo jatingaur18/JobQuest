@@ -21,6 +21,7 @@ const fetchProfile = require('./routes/fetchProfile')
 const fetchChat = require('./routes/fetchChat')
 const fetchChatList = require('./routes/fetchChatList')
 const Message = require('./routes/message')
+const Users = require('./routes/users')
 
 const {connectToDatabase} = require('./utils');
 
@@ -56,6 +57,7 @@ app.use('/fetchProfile',fetchProfile)
 app.use('/fetchChat',fetchChat)
 app.use('/fetchChatList',fetchChatList)
 app.use('/Message',Message)
+app.use('/users',Users)
 
 // calls
 // Store connected clients

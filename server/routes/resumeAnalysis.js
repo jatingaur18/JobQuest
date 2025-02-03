@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../middleware/JWTauth');
 const { analyze_Resume } = require('../test_generator/resumeAnalysis.js');
+const URL = process.env.API_URL
 
 async function analyzeResume() {
     try {
@@ -39,7 +40,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const fileUrl = applydata.resume;
 
     try {
-        const response = await fetch('http://localhost:3000/downloadResume', {
+        const response = await fetch(`${URL}/downloadResume`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

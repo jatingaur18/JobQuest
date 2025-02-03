@@ -24,7 +24,7 @@ const test_gen = async (jobDescription) => {
         after the options with !@#ans"
         // Generate response using Gemini
         const result = await model.generateContent(descQuery+context);
-        
+        console.log(result)
         // Check if response exists and has content
         if (!result || !result.response) {
             throw new Error('No response received from AI model');

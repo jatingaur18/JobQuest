@@ -2,6 +2,7 @@ const pdfParse = require('pdf-parse');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 const fs = require('fs').promises;
+const path = require('path');
 
 // Load environment variables
 dotenv.config();

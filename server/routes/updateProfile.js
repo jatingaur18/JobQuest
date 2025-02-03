@@ -13,12 +13,10 @@ router.post('/', authenticateToken, async (req, res) => {
   const users = db.collection('users');
 
   try {
-    // Check if the user already exists based on email
     const userarr = await users.find({}).toArray();
     const foundUser = userarr.find(x => x.email === userdata.email);
 
     if (foundUser) {
-      // If user exists, update profile_section
       const updateResult = await users.updateOne(
         { email: userdata.email },
         { $set: { profile_section: data } }
@@ -26,7 +24,6 @@ router.post('/', authenticateToken, async (req, res) => {
       
       res.status(200).json({ message: 'Profile section updated successfully' });
     } else {
-      // If user doesn't exist, return an error
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {

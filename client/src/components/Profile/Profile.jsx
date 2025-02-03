@@ -1,4 +1,4 @@
-import { Users, Mail, Link as LinkIcon, MapPin, MessageCircle ,Edit} from 'lucide-react';
+import {Building2, UserX,AlertCircle,Users, Mail, Link as LinkIcon, MapPin, MessageCircle ,Edit} from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,16 +15,18 @@ const UserProfileView = () => {
     const [mess, setMess] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [ProEmail,setProEmail] = useState("");
+    const [notFound,setnotFound] = useState(false);
+    const [Prof,setProf]=useState(null);
     const nav = useNavigate();
 
     useEffect(() => {
+      fetchProfile(id);
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
         }
         console.log("Fetched ID:", id);
-        fetchProfile(id);
     }, [id,nav, setUser]);
 
 const fetchProfile = async (username) => {
@@ -42,11 +44,11 @@ const fetchProfile = async (username) => {
     if (response.status === 200) {
       const prof = await response.json();
       console.log("Profile data:", prof);
+      setProf(prof.profile)
       setProfile(prof.profile.profile_section);
       setProEmail(prof.profile.email)
     } else {
-      console.error("Error response status:", response.status);
-      Popmess('UNABLE TO FETCH DATA');
+      nav('/not-found', { state: { mess: 'USER' } });
     }
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -77,7 +79,7 @@ const fetchProfile = async (username) => {
           user: user,
           chatData: {
             chatID: null,
-            to: ProEmail,
+            to: id,
             message: ""
           }
         })
@@ -97,13 +99,47 @@ const fetchProfile = async (username) => {
   </div>; // Show a loading state while fetching data
   }
   const updateProfile = ()=>{
-    nav(`/userProfile`)
+    if(user.type == "applicant"){
+
+      nav(`/userProfile`)
+    }
+    else{
+      nav(`/Companyprofile`)
+    }
+  }
+
+  if (!Profile || !Profile.about || Object.keys(Profile.about).length === 0) {
+    return (
+      <div className="h-screen w-screen bg-violet-200 overflow-auto">
+        <div className="max-w-6xl mx-auto rounded-xl m-8 bg-white">
+          <div className="bg-blue-900 text-white p-6 rounded-xl">
+            <div className="flex items-center">
+              <Users size={40} className="mr-4" />
+              <h1 className="text-3xl font-bold">Profile</h1>
+              {user.username===id && <Edit size={24} onClick={(e)=> updateProfile()} className="text-white cursor-pointer m-2 hover:text-gray-300" />}
+            </div>
+          </div>
+  
+          <div className="p-6">
+            <div className="flex flex-col items-center justify-center py-12">
+              <AlertCircle size={48} className="text-violet-900 mb-4" />
+              {user.username===id && <h2 className="text-2xl font-semibold text-violet-900 mb-2">Please Update your Profile </h2>}
+              {user.username!==id &&  <h2 className="text-2xl font-semibold text-violet-900 mb-2">Profile Not Updated</h2>}
+              <p className="text-gray-600 text-center max-w-md">
+                This user hasn't updated their profile information yet. Check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
   
 
   return (
-    <div className="h-screen w-screen bg-violet-200 overflow-auto">
-      <div className="max-w-6xl mx-auto rounded-xl m-8 bg-white">
+    <div>{showPopup && <Popup message= {mess} />}
+    {Prof.type === "applicant" && (<div className="h-screen w-screen bg-violet-200 overflow-auto">
+      <div className="max-w-6xl mx-auto rounded-xl m-8 bg-white m-2">
       <div className="bg-blue-900 text-white p-6 flex rounded-xl justify-between items-center">
         <div className="flex items-center">
             <Users size={40} className="mr-4" />
@@ -134,7 +170,7 @@ const fetchProfile = async (username) => {
                 {Profile.about.links.map((link, index) => (
                   <a 
                     key={index} 
-                    href={link} 
+                    href={`https://${link}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800"
@@ -186,6 +222,107 @@ const fetchProfile = async (username) => {
           </section>
         </div>
       </div>
+    </div>)}
+    {Prof.type === "company" && (
+    <div className="h-screen w-screen bg-violet-200 overflow-auto">
+      <div className="max-w-6xl mx-auto rounded-xl m-8 bg-white">
+        <div className="bg-blue-900 text-white p-6 flex rounded-xl justify-between items-center">
+          <div className="flex items-center">
+            <Building2 size={40} className="mr-4" />
+            <div className="flex items-center">
+              <h1 className="text-3xl font-bold mr-3">{Profile.about.companyName}</h1>
+              {user.username === id && <Edit size={24} onClick={(e) => updateProfile()} className="text-white cursor-pointer hover:text-gray-300" />}
+            </div>
+          </div>
+          {user.username !== id && <button 
+            className="bg-white text-violet-900 p-2 rounded-full flex items-center hover:bg-gray-100"
+            onClick={() => Chat()}
+          >
+            <MessageCircle /> 
+          </button>}
+        </div>
+
+        <div className="p-6">
+          {/* About Section */}
+          <section className="mb-6">
+            <h2 className="text-2xl font-semibold text-violet-900 mb-4">About</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-700"><strong>Founded:</strong> {Profile.about.yearFounded}</p>
+                <p className="text-gray-700 mt-2">{Profile.about.description}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-violet-800 mb-2">Links</h3>
+                {Profile.about.links.map((link, index) => (
+                  <a 
+                    key={index} 
+                    href={`https://${link}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800"
+                  >
+                    <LinkIcon size={16} className="mr-2" /> {link}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Locations Section */}
+          <section className="mb-6">
+            <h2 className="text-2xl font-semibold text-violet-900 mb-4">Locations</h2>
+            {Profile.locations.map((location, index) => (
+              <div key={index} className="bg-white border border-violet-200 p-4 mb-4">
+                <div className="flex items-center">
+                  <MapPin className="text-violet-800 mr-2" />
+                  <h3 className="text-lg font-semibold text-violet-800">
+                    {location.city}, {location.country}
+                  </h3>
+                </div>
+                {location.isHeadquarters && (
+                  <p className="text-gray-600 mt-1">Headquarters</p>
+                )}
+              </div>
+            ))}
+          </section>
+
+          {/* Technologies Section */}
+          <section className="mb-6">
+            <h2 className="text-2xl font-semibold text-violet-900 mb-4">Technologies</h2>
+            <div className="flex flex-wrap gap-2">
+              {Profile.technologies.techList.map((tech, index) => (
+                <span 
+                  key={index} 
+                  className="bg-violet-200 text-violet-900 px-3 py-1 text-sm"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Achievements Section */}
+          <section>
+            <h2 className="text-2xl font-semibold text-violet-900 mb-4">Achievements & Awards</h2>
+            {Profile.achievements && Profile.achievements.length > 0 ? (
+              Profile.achievements.map((achievement, index) => (
+                <div key={index} className="bg-white border border-violet-200 p-4 mb-4">
+                  <div className="flex items-center">
+                    <Award className="text-violet-800 mr-2" />
+                    <h3 className="text-lg font-semibold text-violet-800">{achievement.title}</h3>
+                  </div>
+                  <p className="text-gray-700">{achievement.year}</p>
+                  <p className="text-gray-600 mt-1">{achievement.description}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">No achievements listed yet.</p>
+            )}
+          </section>
+        </div>
+      </div>
+    </div>
+  )}
     </div>
   );
 };

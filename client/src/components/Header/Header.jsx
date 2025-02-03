@@ -2,7 +2,10 @@ import { Link, NavLink } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 import { useNavigate } from "react-router-dom";
 import jobquestImage from '../../assets/jobquest.png'; 
+import { User } from 'lucide-react';
+
 import React, { useContext, useState, useEffect } from 'react';
+
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
@@ -39,20 +42,21 @@ function Header() {
           </Link>
           <div className="flex items-center lg:order-2">
             {user.username ? (
-              <div>
-                <Link
-                  to={`/Profile/${user.username}`}
-                  className="text-white bg-violet-900 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-                >
-                  Hi {user.username} !
-                </Link>
-                <button
-                  className="text-white bg-red-700 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-                  onClick={()=>{logout()}}
-                >
-                  logout
-                </button>
-              </div>
+              <div className="flex items-center gap-2">
+              <Link 
+              to={`/Profile/${user.username}`}
+                className="flex items-center gap-2 text-white bg-violet-900 hover:bg-violet-800 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-colors"
+              >
+                <User size={18} />
+                <span>Hi {user.username}!</span>
+              </Link>
+              <button
+                className="text-white bg-red-700 hover:bg-violet-900 focus:ring-4 focus:ring-violet-400 font-medium rounded-lg text-sm px-4 py-2.5 focus:outline-none"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            </div>
               
             ) : (
               <Link
@@ -146,6 +150,18 @@ function Header() {
                   Opened Jobs
                 </NavLink>
                 )}
+              </li>
+              <li>
+              <NavLink
+                  to="/Message"
+                  className={({ isActive }) =>
+                    `block py-2 pr-4 pl-3 duration-200 ${
+                      isActive ? "text-violet-900" : "text-gray-700"
+                    } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 hover:text-violet-900 lg:p-0`
+                  }
+                >
+                  Message
+                </NavLink>
               </li>
             </ul>
           </div>

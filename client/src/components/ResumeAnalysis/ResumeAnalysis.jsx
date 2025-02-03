@@ -44,7 +44,7 @@ const Jobs = () => {
 
   if (!data) {
     return <div className='min-h-screen flex justify-center items-center'>
-      <img className='w-[400px] ' src="./src/assets/loading2.gif" alt="" />
+      <img className='w-[400px] ' src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/4cec2c69321565.5b7d0cbe75933.gif" alt="" />
     </div>; // Show a loading state while fetching data
   }
 
@@ -53,7 +53,7 @@ const Jobs = () => {
   <div className="w-full sm:w-1/2 p-4 text-white">
     {/* Left */}
     <div className="h-[calc(100vh-16px)] overflow-y-auto">
-      <img src={jsonData.pdf} alt="Resume Preview" />
+      <img src={jsonData.pdf.slice(0, -3) + 'jpg'} alt="Resume Preview" />
     </div>
   </div>
   <div className="w-full sm:w-1/2 p-4">

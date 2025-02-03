@@ -16,10 +16,12 @@ import Skilltest from './components/Skilltest/Skilltest.jsx'
 import Jobstatus from './components/JobStatus/JobStatus.jsx'
 import ResumeAnalysis from './components/ResumeAnalysis/ResumeAnalysis.jsx'
 import ProfileCreationForm from './components/Details/Details.jsx'
+import Companyprofileform from './components/Details/CompanyDetails.jsx'
 import Profile from './components/Profile/Profile.jsx'
 import Message from './components/Message/Message.jsx'
 // import MeetingRoom from './components/Meeting/MeetingRoom.jsx'
 import CreateMeeting from './components/Meeting/CreateMeeting.jsx'
+import P404 from './components/404.jsx'
 // const router=createBrowserRouter([
 //   {
 //     path:'/',
@@ -56,10 +58,12 @@ const router=createBrowserRouter(
     <Route path='jobstatus/:id' element={<Jobstatus/>}/>
     <Route path='resumeAnalysis' element={<ResumeAnalysis/>}/>
     <Route path='userProfile' element={<ProfileCreationForm/>}/>
+    <Route path='CompanyProfile' element={<Companyprofileform/>}/>
     <Route path='Profile/:id' element={<Profile/>}/>
     <Route path='Message' element={<Message/>}/>
     {/* <Route path='meet/:id' element={<MeetingRoom/>}/> */}
     <Route path='Create-Meet' element={<CreateMeeting/>}/>
+    <Route path='*' element={<P404 />} />
     </Route>
   )
 )

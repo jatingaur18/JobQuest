@@ -26,7 +26,7 @@ router.post('/', authenticateToken, async (req, res) => {
        // Update last fetch time for user's chat entry
        await users.updateOne(
            { 
-               email: user.email, 
+               username: user.username, 
                'chats.chatID': new ObjectId(chatID) 
            },
            { 

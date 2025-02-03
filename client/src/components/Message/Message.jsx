@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Users, Link, SquarePlus, Trash2, Send } from 'lucide-react';
+import { Users, Link, SquarePlus, Trash2, Send, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 export const API_URL = import.meta.env.VITE_API_URL
@@ -12,10 +12,10 @@ const Message = () => {
   // State for managing chats
   const [chatsList, setChatsList] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [chatMessages, setChatMessages] = useState([]);  // Initialize as empty array
+  const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Fetch user's chats on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     
@@ -26,9 +26,17 @@ const Message = () => {
     } else {
       nav('/Login'); 
     }
+
+    // Set initial sidebar state based on screen size
+    const handleResize = () => {
+      setIsSidebarOpen(window.innerWidth >= 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [nav, setUser]);
 
-  // Fetch user's chats
   const fetchUserChats = async (userData) => {
     try {
       const response = await fetch(`${API_URL}/fetchChatList`, {
@@ -37,25 +45,20 @@ const Message = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ 
-          user: userData,
-        })
+        body: JSON.stringify({ user: userData })
       });
 
       const data = await response.json();
-      console.log(data)
       if (response.ok) {
-        setChatsList(data.chat || []);  // Ensure fallback to empty array
+        setChatsList(data.chat || []);
       }
     } catch (error) {
       console.error('Error fetching chats:', error);
     }
   };
 
-  // Fetch specific chat messages
   const fetchChatMessages = async (chatID) => {
     try {
-        console.log(chatID)
       const response = await fetch(`${API_URL}/fetchChat`, {
         method: 'POST',
         headers: {
@@ -70,16 +73,18 @@ const Message = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setChatMessages(data || []);  // Ensure fallback to empty array
-        console.log(data)
+        setChatMessages(data || []);
         setSelectedChat(chatID);
+        // Close sidebar on mobile after selecting chat
+        if (window.innerWidth < 768) {
+          setIsSidebarOpen(false);
+        }
       }
     } catch (error) {
       console.error('Error fetching chat messages:', error);
     }
   };
 
-  // Send a new message
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
@@ -94,7 +99,7 @@ const Message = () => {
           user: user,
           chatData: {
             chatID: selectedChat,
-            to: chatMessages.user1 === user.email ? chatMessages.user2 : chatMessages.user1,
+            to: chatMessages.user1 === user.username ? chatMessages.user2 : chatMessages.user1,
             message: newMessage
           }
         })
@@ -102,7 +107,6 @@ const Message = () => {
 
       const data = await response.json();
       if (response.ok) {
-        // Optionally refresh chat or add message to local state
         setNewMessage('');
         fetchChatMessages(selectedChat);
       }
@@ -112,17 +116,16 @@ const Message = () => {
   };
 
   const renderMessages = () => {
-    // Ensure chatMessages is an array and has content
     const messages = chatMessages.chats || [];
     
     return messages.map((msg, index) => (
       <div 
         key={index} 
-        className={`mb-2 ${msg.author === user.email ? 'text-right' : 'text-left'}`}
+        className={`mb-2 ${msg.author === user.username ? 'text-right' : 'text-left'}`}
       >
         <span 
           className={`inline-block p-2 rounded-lg ${
-            msg.author === user.email 
+            msg.author === user.username 
               ? 'bg-blue-500 text-white' 
               : 'bg-gray-200'
           }`}
@@ -137,28 +140,45 @@ const Message = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Chats List */}
-      <div className="w-1/4 bg-gray-100 p-4 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Chats</h2>
-        {chatsList.map((chat) => (
-          <div 
-            key={chat.chatID} 
-            onClick={() => fetchChatMessages(chat.chatID)}
-            className={`p-3 border-b cursor-pointer hover:bg-gray-200 ${selectedChat === chat.chatID ? 'bg-blue-100' : ''}`}
-          >
-            <div className="flex justify-between items-center">
-              <span>{chat.chatWith}</span>
-              <span className="text-sm text-gray-500">
-                {chat.lastMessageTime ? new Date(chat.lastMessageTime).toLocaleTimeString() : ''}
-              </span>
+    <div className="flex flex-col md:flex-row relative" style={{ height: 'calc(100vh - 64px)' }}>
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 w-full text-white text-center py-4 z-50 mt-16 shadow-lg">
+        <h2 className="text-lg text-violet-900 font-bold">Messages</h2>
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute top-4 right-4 p-2 rounded-full bg-violet-900 "
+        >
+          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Chats List Sidebar */}
+      <div 
+        className={`${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 md:translate-x-0 fixed md:static w-full md:w-1/4 bg-gray-100 h-full z-40 overflow-y-auto ${window.innerWidth >= 768 ? '' : 'pt-16'}`}
+      >
+        <div className="p-4">
+          <h2 className="text-xl font-bold mb-4 hidden md:block">Chats</h2>
+          {chatsList.map((chat) => (
+            <div 
+              key={chat.chatID} 
+              onClick={() => fetchChatMessages(chat.chatID)}
+              className={`p-3 border-b cursor-pointer hover:bg-gray-200 ${selectedChat === chat.chatID ? 'bg-blue-100' : ''}`}
+            >
+              <div className="flex justify-between items-center">
+                <span>{chat.chatWith}</span>
+                <span className="text-sm text-gray-500">
+                  {chat.lastMessageTime ? new Date(chat.lastMessageTime).toLocaleTimeString() : ''}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Chat Messages Area */}
-      <div className="w-3/4 flex flex-col">
+      <div className={`flex-1 flex flex-col h-full ${window.innerWidth >= 768 ? '' : 'pt-16'}`}>
         {selectedChat ? (
           <>
             {/* Messages Display */}

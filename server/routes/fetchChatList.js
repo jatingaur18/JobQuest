@@ -15,7 +15,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     try {
         const userarr = await users.find({}).toArray();
-        const foundUser = userarr.find(x => x.email === user.email);
+        const foundUser = userarr.find(x => x.username === user.username);
         
         // Send chat if present, otherwise send null
         res.json({ chat: foundUser?.chats || null });

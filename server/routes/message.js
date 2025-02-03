@@ -17,8 +17,8 @@ router.post('/', authenticateToken, async (req, res) => {
 
     try {
         // Find sender and receiver user documents
-        const senderUser = await users.findOne({ email: user.email });
-        const receiverUser = await users.findOne({ email: chatData.to });
+        const senderUser = await users.findOne({ username: user.username });
+        const receiverUser = await users.findOne({ username: chatData.to });
 
         if (!senderUser || !receiverUser) {
             return res.status(404).json({ message: 'User not found' });
@@ -31,8 +31,8 @@ router.post('/', authenticateToken, async (req, res) => {
             // Check existing chats for both users
             const existingChat = await chats.findOne({
                 $or: [
-                    { user1: senderUser.email, user2: receiverUser.email },
-                    { user1: receiverUser.email, user2: senderUser.email }
+                    { user1: senderUser.username, user2: receiverUser.username },
+                    { user1: receiverUser.username, user2: senderUser.username }
                 ]
             });
 
@@ -42,8 +42,8 @@ router.post('/', authenticateToken, async (req, res) => {
 
             // Create new chat
             const newChat = {
-                user1: senderUser.email,
-                user2: receiverUser.email,
+                user1: senderUser.username,
+                user2: receiverUser.username,
                 chats: []
             };
 
@@ -53,7 +53,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
         // Prepare message object
         const messageObject = {
-            author: user.email,
+            author: user.username,
             message: chatData.message,
             time: new Date()
         };
@@ -68,20 +68,20 @@ router.post('/', authenticateToken, async (req, res) => {
 
         // Update sender's chats array
         await users.updateOne(
-            { email: user.email },
+            { username: user.username },
             { 
                 $set: { 
-                    chats: updateUserChats(senderUser.chats || [], chatId, receiverUser.email, messageObject.time) 
+                    chats: updateUserChats(senderUser.chats || [], chatId, receiverUser.username, messageObject.time) 
                 }
             }
         );
 
         // Update receiver's chats array
         await users.updateOne(
-            { email: receiverUser.email },
+            { username: receiverUser.username },
             { 
                 $set: { 
-                    chats: updateUserChats(receiverUser.chats || [], chatId, senderUser.email, messageObject.time) 
+                    chats: updateUserChats(receiverUser.chats || [], chatId, senderUser.username, messageObject.time) 
                 }
             }
         );

@@ -1,117 +1,134 @@
-import React, { useEffect } from 'react'
-import {useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn, UserPlus, AlertCircle } from 'lucide-react';
 import UserContext from '../../contexts/UserContext';
 import Popup from '../Popup/Popup';
-export const API_URL = import.meta.env.VITE_API_URL
-function Login(){
 
-  const {user ,setUser}=useContext(UserContext) 
+export const API_URL = import.meta.env.VITE_API_URL;
+
+function Login() {
+  const { user, setUser } = useContext(UserContext);
   const [showPopup, setShowPopup] = useState(false);
   const [Uemail, setEmail] = useState("");
   const [Upassword, setPassword] = useState("");
   const [mess, setMess] = useState("");
-  
+  const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
 
-  const register = async () => {
-    nav('/Register')
-  }
-  const Popmess = async (mess)=>{
+  const register = () => nav('/Register');
+
+  const Popmess = (mess) => {
     setMess(mess);
     setShowPopup(true);
-      setTimeout(() => {
-        setShowPopup(false);
-      }, 2000);
-  }
+    setTimeout(() => setShowPopup(false), 2000);
+  };
 
   const submit = async () => {
-    
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: Uemail,
-        password: Upassword
-      })
-    })
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: Uemail, password: Upassword })
+      });
 
-    const status = response.status;
-    var json = await response.json();
-    const token =json.token;
-    json = json.user;
-    localStorage.setItem('authToken', token); 
-    if(status === 200){
-      const authuser = {
-        email: json.email,
-        username: json.username,
-        type: json.type
-        }
-      console.log("login success");
-      localStorage.setItem('user', JSON.stringify(authuser));
-      setUser(authuser)
-      if(json.type == 'company'){
-        nav('/')
-      }else{
-        nav('/jobs');
+      const status = response.status;
+      const json = await response.json();
+      const token = json.token;
+      const userData = json.user;
+
+      if (status === 200) {
+        localStorage.setItem('authToken', token);
+        const authuser = {
+          email: userData.email,
+          username: userData.username,
+          type: userData.type
+        };
+        localStorage.setItem('user', JSON.stringify(authuser));
+        setUser(authuser);
+        nav(userData.type === 'company' ? '/' : '/jobs');
+      } else {
+        Popmess("Incorrect login credentials");
       }
-      console.log(json);
-
+    } catch (error) {
+      Popmess("An error occurred during login");
+    } finally {
+      setIsLoading(false);
     }
-    else{
-      Popmess("incorrect login credentials")
-      console.log("incorrect login credentials");
-    }
-
-  }
+  };
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
-      setUser(storedUser); // Sync context with local storage
-      nav(-1); // Redirect to home page
+      setUser(storedUser);
+      nav(-1);
     }
   }, [nav, setUser]);
 
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {showPopup && (
+        <div className="fixed top-4 right-4">
+          <Popup message={mess} />
+        </div>
+      )}
+      
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border-2 border-violet-200">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Please sign in to your account
+          </p>
+        </div>
+        
+        <div className="mt-8 space-y-6">
+          <div className="space-y-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="email"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                placeholder="Email address"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="password"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
 
-
-  return(
-    <div className="flex pt-24 justify-center h-screen">
-      {showPopup && <Popup message= {mess} />}
-      <div className="bg-white p-8 border-4 border-violet-900 rounded-lg w-100 h-96 flex flex-col justify-between">
-        <h1 className="text-center text-3xl font-bold">Login</h1>
-        <div className="space-y-4">
-          <label className="block">
-            <span className="block text-gray-700">Email</span>
-            <input
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-violet-900"
-              type="text"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <label className="block">
-            <span className="block text-gray-700">Password</span>
-            <input
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-violet-900"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <div className="text-center">
+          <div className="flex flex-col space-y-3">
             <button
-              className="m-2 px-4 py-2 border-2 border-violet-900 bg-violet-900 text-white rounded-md hover:bg-violet-700"
-              type="submit"
               onClick={submit}
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-900 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
             >
-              Login
+              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                <LogIn className="h-5 w-5 text-violet-200 group-hover:text-violet-100" />
+              </span>
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
+            
             <button
-              className="m-2 px-4 py-2 border-2 border-violet-900 bg-gray-300 text-black rounded-md hover:bg-gray-600 hover:text-white"
-              type="submit"
               onClick={register}
+              className="group relative w-full flex justify-center py-2 px-4 border-2 border-violet-900 text-sm font-medium rounded-md text-violet-900 bg-transparent hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
             >
+              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                <UserPlus className="h-5 w-5 text-violet-900 group-hover:text-violet-700" />
+              </span>
               Register
             </button>
           </div>
@@ -121,4 +138,4 @@ function Login(){
   );
 }
 
-export default Login
+export default Login;

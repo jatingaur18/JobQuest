@@ -36,7 +36,7 @@ const Openedjobs = () => {
   
     return(
       <>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 h-screen">
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
       <ul className="space-y-4 p-2">
         {data.map(item => (

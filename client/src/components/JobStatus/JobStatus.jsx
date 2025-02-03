@@ -21,6 +21,10 @@ const Jobs = () => {
       setData(json);
       console.log(json)
     }
+    else{
+      console.log("asdadasdas")
+      nav('/not-found', { state: { mess: 'JOB' } });
+    }
   }
 
   useEffect(() => {
@@ -31,7 +35,7 @@ const Jobs = () => {
   }, [user, nav]);
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 h-screen">
       <h1 className="text-2xl font-bold my-4">Jobs</h1>
       <ul className="space-y-4 p-2">
         {data.map(item => (
@@ -41,7 +45,7 @@ const Jobs = () => {
             </div>
             <button
               className="bg-violet-900 text-white px-4 py-2 rounded-md hover:bg-violet-700"
-              onClick={() => window.open(item.link.pdf, '_blank')}
+              onClick={() => window.open(item.link.pdf.slice(0, -3) + 'jpg', '_blank')}
             >
               resume
             </button>

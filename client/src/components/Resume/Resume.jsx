@@ -139,58 +139,61 @@ function Contact() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Upload Card */}
           <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`relative p-6 rounded-lg border-2 border-dashed transition-colors ${
-              isDragging
-                ? 'border-violet-500 bg-violet-50'
-                : 'border-violet-200 bg-white hover:border-violet-500'
-            }`}
-          >
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              accept=".pdf"
-            />
-            <div className="flex flex-col items-center justify-center h-full space-y-4">
-              <div className="p-4 bg-violet-100 rounded-full">
-                <FileUp className="w-8 h-8 text-violet-600" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-violet-900">
-                  {file ? file.name : 'Drop your resume here'}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  or click to browse (PDF only)
-                </p>
-              </div>
-              {file && (
-                <button
-                  onClick={fileUpload}
-                  disabled={loading}
-                  className={`mt-4 px-6 py-2 rounded-lg font-semibold flex items-center gap-2 ${
-                    loading
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-violet-600 hover:bg-violet-700'
-                  } text-white`}
-                >
-                  {loading ? (
-                    <>
-                      <Upload className="w-4 h-4 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4" />
-                      Upload Resume
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
+  onDragOver={handleDragOver}
+  onDragLeave={handleDragLeave}
+  onDrop={handleDrop}
+  className={`relative p-6 rounded-lg border-2 border-dashed transition-colors ${
+    isDragging
+      ? 'border-violet-500 bg-violet-50'
+      : 'border-violet-200 bg-white hover:border-violet-500'
+  }`}
+>
+  <div className="flex flex-col items-center justify-center h-full space-y-4">
+    <label className="flex flex-col items-center justify-center cursor-pointer w-full">
+      <div className="p-4 bg-violet-100 rounded-full">
+        <FileUp className="w-8 h-8 text-violet-600" />
+      </div>
+      <div className="text-center">
+        <p className="text-sm font-medium text-violet-900">
+          {file ? file.name : 'Drop your resume here'}
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          or click to browse (PDF only)
+        </p>
+      </div>
+      <input
+        type="file"
+        onChange={handleFileChange}
+        className="hidden"
+        accept=".pdf"
+        id="file-upload"
+      />
+    </label>
+    {file && (
+      <button
+        onClick={fileUpload}
+        disabled={loading}
+        className={`mt-4 px-6 py-2 rounded-lg font-semibold flex items-center gap-2 ${
+          loading
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-violet-600 hover:bg-violet-700'
+        } text-white`}
+      >
+        {loading ? (
+          <>
+            <Upload className="w-4 h-4 animate-spin" />
+            Uploading...
+          </>
+        ) : (
+          <>
+            <Upload className="w-4 h-4" />
+            Upload Resume
+          </>
+        )}
+      </button>
+    )}
+  </div>
+</div>
 
           {/* Resume Cards */}
           {resumes.map((resume, index) => (

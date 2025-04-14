@@ -18,7 +18,8 @@ const evaluateResume = async (jobDescription) => {
         const resumePath = path.join(__dirname, '../resume.pdf')
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(process.env.KEY);
-        const model = genai.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genai.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
+
 
         // Read and extract text from PDF
         const dataBuffer = await fs.readFile(resumePath);

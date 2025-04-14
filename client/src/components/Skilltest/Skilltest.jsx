@@ -94,7 +94,7 @@ function User() {
       });
       const resData = await response.json();
       
-      if (resData.status === 200) {
+      if (response.status === 200) {
         showNotification("Test submitted successfully!", true);
       } else {
         showNotification("Failed to submit test", false);

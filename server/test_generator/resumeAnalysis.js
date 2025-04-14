@@ -66,7 +66,7 @@ const analyze_Resume = async (resumePath = path.join(__dirname, '../resume.pdf')
     try {
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(GOOGLE_API_KEY);
-        const model = genai.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genai.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
 
         // Read and extract text from PDF
         const dataBuffer = await fs.readFile(resumePath);
@@ -122,6 +122,6 @@ Return only the output as described. Do not include anything else.`;
         console.error('Error in resume analysis:', error);
         throw error;
     }
-}
+};
 
 module.exports = { analyze_Resume };

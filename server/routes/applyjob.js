@@ -39,11 +39,11 @@ router.post('/', authenticateToken, async (req, res) => {
 
         const job_desc = jobs.description;
         const resumeScore = await evaluateResume(job_desc);
-        console.log(resumeScore)
+        console.log("Resume score:", resumeScore);
 
-        if (isNaN(resumeScore)) {
-            return res.status(500).json({ message: 'Invalid score returned from evaluation function' });
-        }
+        // if (isNaN(resumeScore)) {
+        //     return res.status(500).json({ message: 'Invalid score returned from evaluation function' });
+        // }
 
         // Calculate the average score
         const updatedScore = (score) * 2 + (resumeScore * 9) / 10;

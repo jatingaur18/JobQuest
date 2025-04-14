@@ -15,7 +15,7 @@ const test_gen = async (jobDescription) => {
     try {
         // Initialize Gemini AI
         const genai = new GoogleGenerativeAI(process.env.KEY);
-        const model = genai.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genai.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
 
         const descQuery = `give 5 extremely difficult technical mcq questions for the person we are looking to hire based on the following job description ${jobDescription}`;
         const question = "Give me 5 extremely difficult python mcq questions"

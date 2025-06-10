@@ -3,6 +3,7 @@ import { Users, Link, SquarePlus, Trash2, Send, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 export const API_URL = import.meta.env.VITE_API_URL
+import { Video } from 'lucide-react';
 
 const Message = () => {
   const nav = useNavigate();
@@ -37,6 +38,39 @@ const Message = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [nav, setUser]);
+
+  const createMeetingAndSend = async () => {
+  if (!selectedChat) return;
+
+  const roomId = Math.random().toString(36).substring(2, 12); // Random 10-char string
+  const meetingLink = `https://meet.jit.si/${roomId}`;
+
+  try {
+    const response = await fetch(`${API_URL}/Message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        user: user,
+        chatData: {
+          chatID: selectedChat,
+          to: chatMessages.user1 === user.username ? chatMessages.user2 : chatMessages.user1,
+          message: `📹 Interview Meeting Link: ${meetingLink}`
+        }
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      fetchChatMessages(selectedChat); // Refresh chat
+    }
+  } catch (error) {
+    console.error('Error sending meeting link:', error);
+  }
+};
+
 
   const fetchUserChats = async (userData, forceRefresh = false) => {
     try {
@@ -227,13 +261,26 @@ const Message = () => {
                 className="flex-grow p-2 border rounded-l-lg"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
+
+              {/* Meeting Button */}
+              <button 
+                onClick={createMeetingAndSend}
+                className="bg-green-500 text-white p-2"
+                title="Send Meeting Link"
+              >
+                <Video size={20} />
+              </button>
+
+              {/* Send Button */}
               <button 
                 onClick={sendMessage}
                 className="bg-blue-500 text-white p-2 rounded-r-lg"
+                title="Send Message"
               >
                 <Send size={20} />
               </button>
             </div>
+
           </>
         ) : (
           <div className="flex-grow flex items-center justify-center text-gray-500">

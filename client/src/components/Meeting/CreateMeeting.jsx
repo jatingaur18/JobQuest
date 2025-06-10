@@ -1,148 +1,61 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from "react";
+import { Video } from "lucide-react"; // Video icon
+export const API_URL = import.meta.env.VITE_API_URL;
 
-const ICE_SERVERS = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+export default function CreateMeeting() {
+  const [meetingLink, setMeetingLink] = useState("");
+  const [loading, setLoading] = useState(false);
 
-export default function VideoCall() {
-  const [roomId, setRoomId] = useState('');
-  const [joined, setJoined] = useState(false);
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-  
-  const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const peerConnectionRef = useRef(null);
-  const wsRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (wsRef.current) wsRef.current.close();
-      if (localStream) localStream.getTracks().forEach(track => track.stop());
-    };
-  }, []);
-
-  const joinRoom = async () => {
-    if (!roomId) return alert("Enter a room ID");
-
-    wsRef.current = new WebSocket('ws://localhost:3000');
-
-    wsRef.current.onopen = () => {
-      wsRef.current.send(JSON.stringify({ type: 'join', roomId }));
-    };
-
-    wsRef.current.onmessage = async ({ data }) => {
-      const message = JSON.parse(data);
-      
-      switch (message.type) {
-        case 'offer':
-          handleOffer(message.offer, message.roomId);
-          break;
-        case 'answer':
-          handleAnswer(message.answer);
-          break;
-        case 'ice-candidate':
-          handleNewICECandidate(message.candidate);
-          break;
-      }
-    };
-
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    setLocalStream(stream);
-    localVideoRef.current.srcObject = stream;
-
-    peerConnectionRef.current = new RTCPeerConnection(ICE_SERVERS);
-    stream.getTracks().forEach(track => peerConnectionRef.current.addTrack(track, stream));
-
-    peerConnectionRef.current.ontrack = ({ streams: [stream] }) => {
-      setRemoteStream(stream);
-      remoteVideoRef.current.srcObject = stream;
-    };
-
-    peerConnectionRef.current.onicecandidate = ({ candidate }) => {
-      if (candidate) {
-        wsRef.current.send(JSON.stringify({ type: 'ice-candidate', candidate, roomId }));
-      }
-    };
-
-    setJoined(true);
-  };
-
-  const startCall = async () => {
-    if (!peerConnectionRef.current) return;
-
-    const offer = await peerConnectionRef.current.createOffer();
-    await peerConnectionRef.current.setLocalDescription(offer);
-
-    wsRef.current.send(JSON.stringify({ type: 'offer', offer, roomId }));
-  };
-
-  const handleOffer = async (offer, senderRoomId) => {
-    if (senderRoomId !== roomId) return; // Ignore offers from other rooms
-
-    await peerConnectionRef.current.setRemoteDescription(offer);
-    const answer = await peerConnectionRef.current.createAnswer();
-    await peerConnectionRef.current.setLocalDescription(answer);
-
-    wsRef.current.send(JSON.stringify({ type: 'answer', answer, roomId }));
-  };
-
-  const handleAnswer = async (answer) => {
-    await peerConnectionRef.current.setRemoteDescription(answer);
-  };
-
-  const handleNewICECandidate = async (candidate) => {
-    await peerConnectionRef.current.addIceCandidate(candidate);
-  };
-
-  const leaveRoom = () => {
-    if (peerConnectionRef.current) peerConnectionRef.current.close();
-    if (localStream) localStream.getTracks().forEach(track => track.stop());
-    
-    setLocalStream(null);
-    setRemoteStream(null);
-    setJoined(false);
-    setRoomId('');
+  const handleCreateMeeting = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/createmeeting`);
+      const data = await res.json();
+      setMeetingLink(data.link);
+    } catch (error) {
+      console.error("Error creating meeting", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
-      <h1 className="text-2xl font-bold">WebRTC Room-Based Video Call</h1>
-
-      {!joined ? (
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Enter Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="px-3 py-2 border rounded"
-          />
-          <button onClick={joinRoom} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Join Room
-          </button>
+    <div className="min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-white flex flex-col items-center justify-center px-4">
+      <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full text-center">
+        <div className="flex justify-center mb-4">
+          <Video size={48} className="text-indigo-600" />
         </div>
-      ) : (
-        <>
-          <div className="flex gap-4">
-            <div className="relative">
-              <video ref={localVideoRef} autoPlay playsInline muted className="w-80 h-60 bg-gray-200 rounded" />
-              <p className="absolute bottom-2 left-2 text-white">You</p>
-            </div>
-            <div className="relative">
-              <video ref={remoteVideoRef} autoPlay playsInline className="w-80 h-60 bg-gray-200 rounded" />
-              <p className="absolute bottom-2 left-2 text-white">Remote</p>
-            </div>
-          </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Start an Interview</h1>
+        <p className="text-gray-500 mb-6">
+          Click below to generate a secure video meeting link.
+        </p>
 
-          <div className="flex gap-4">
-            <button onClick={startCall} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-              Start Call
-            </button>
-            <button onClick={leaveRoom} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-              Leave Room
-            </button>
+        <button
+          onClick={handleCreateMeeting}
+          disabled={loading}
+          className={`w-full py-3 text-white rounded-lg transition-all font-semibold ${
+            loading
+              ? "bg-indigo-300 cursor-not-allowed"
+              : "bg-indigo-600 hover:bg-indigo-700"
+          }`}
+        >
+          {loading ? "Creating..." : "Generate Meeting Link"}
+        </button>
+
+        {meetingLink && (
+          <div className="mt-6">
+            <p className="text-gray-700 font-medium mb-2">Meeting Link:</p>
+            <a
+              href={meetingLink}
+              className="text-blue-600 underline break-all text-sm hover:text-blue-800"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {meetingLink}
+            </a>
           </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 }

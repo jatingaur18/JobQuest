@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import UserContext from '../../contexts/UserContext';
 import { useNavigate } from "react-router-dom";
 import jobquestImage from '../../assets/jobquest.png'; 
-import { User, Search, X, Menu } from 'lucide-react';
+import { User, Search, X, Menu, Video } from 'lucide-react';
 export const API_URL = import.meta.env.VITE_API_URL
 import React, { useContext, useState, useEffect } from 'react';
 
@@ -299,6 +299,18 @@ function Header() {
                   }
                 >
                   Message
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/Create-Meet"
+                  className={({ isActive }) =>
+                    `block py-2 pr-4 pl-3 duration-200 ${
+                      isActive ? "text-violet-900" : "text-gray-700"
+                    } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 hover:text-violet-900 lg:p-0`
+                  }
+                >
+                  Meeting
                 </NavLink>
               </li>
             </ul>

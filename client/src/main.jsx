@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import {Routes} from "react-router-dom";
 import App from './App.jsx'
 import './index.css'
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider,BrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider,BrowserRouter as Router } from 'react-router-dom'
 import Layout from './Layout.jsx'
 import Home from './components/Home/Home.jsx'
 import Jobs from './components/Jobs/Jobs.jsx'
@@ -19,7 +20,7 @@ import ProfileCreationForm from './components/Details/Details.jsx'
 import Companyprofileform from './components/Details/CompanyDetails.jsx'
 import Profile from './components/Profile/Profile.jsx'
 import Message from './components/Message/Message.jsx'
-// import MeetingRoom from './components/Meeting/MeetingRoom.jsx'
+import MeetingRoom from './components/Meeting/MeetingRoom.jsx'
 import CreateMeeting from './components/Meeting/CreateMeeting.jsx'
 import P404 from './components/404.jsx'
 // const router=createBrowserRouter([
@@ -63,6 +64,7 @@ const router=createBrowserRouter(
     <Route path='Message' element={<Message/>}/>
     {/* <Route path='meet/:id' element={<MeetingRoom/>}/> */}
     <Route path='Create-Meet' element={<CreateMeeting/>}/>
+    <Route path="/meeting/:roomId" element={<MeetingRoom />} />
     <Route path='*' element={<P404 />} />
     </Route>
   )

@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const http = require('http');
 const port = 3000;
-const WebSocket = require('ws');
 
 const loginRoute = require('./routes/login');
 const signupRoute = require('./routes/signup');
@@ -22,6 +20,7 @@ const fetchChat = require('./routes/fetchChat')
 const fetchChatList = require('./routes/fetchChatList')
 const Message = require('./routes/message')
 const Users = require('./routes/users')
+const CreateMeeting =  require('./routes/createRoom');
 
 const {connectToDatabase} = require('./utils');
 
@@ -31,12 +30,6 @@ let bucket;
 connectToDatabase();
 
 const app = express();
-const { Server } = require('socket.io');
-//video call
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-//
-
 app.use(cors());
 app.use(express.json());
 
@@ -58,43 +51,10 @@ app.use('/fetchChat',fetchChat)
 app.use('/fetchChatList',fetchChatList)
 app.use('/Message',Message)
 app.use('/users',Users)
-
-// calls
-// Store connected clients
-const clients = new Set();
-const rooms = {}; // Store roomId -> Set of clients
-
-wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-      const data = JSON.parse(message);
-      const { roomId } = data;
-  
-      if (!rooms[roomId]) {
-        rooms[roomId] = [];
-      }
-  
-      if (!rooms[roomId].includes(ws)) {
-        rooms[roomId].push(ws);
-      }
-  
-      // Broadcast message to everyone in the room except sender
-      rooms[roomId].forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
-  
-      // Cleanup on disconnect
-      ws.on('close', () => {
-        rooms[roomId] = rooms[roomId].filter(client => client !== ws);
-        if (rooms[roomId].length === 0) {
-          delete rooms[roomId];
-        }
-      });
-    });
-  });
+app.use('/createmeeting',CreateMeeting);
 
 
-server.listen(port, () => {
+
+app.listen(port, () => {
   console.log(`listening on port ${port}`)
 })
